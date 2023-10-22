@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Step 4</title>
+
+    <!-- Include Bootstrap 4 CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="mb-0">Answer the Questions</h2>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/exam/submit}" method="post">
+                <th:block th:each="question : ${questions}">
+                    <fieldset class="form-group">
+                        <legend th:text="${question.content}"></legend>
+                        <!-- Assume each question has multiple choices in a list -->
+                        <th:block th:each="answer : ${question.answers}">
+                            <div class="form-check">
+                                <label>
+                                    <input class="form-check-input" type="radio" th:value="${answer.id}" th:name="${'answerForQuestion_' + question.id}" required>
+                                </label>
+                                <label class="form-check-label" th:text="${answer.content}"></label>
+                            </div>
+                        </th:block>
+                    </fieldset>
+                </th:block>
+                <button type="submit" class="btn btn-primary mt-3">Submit Answers</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Optional: Include Bootstrap JS and Popper.js for dropdowns, modals, etc. -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
