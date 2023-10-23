@@ -3,16 +3,11 @@ package com.exam.controllers;
 import com.exam.models.Question;
 import com.exam.models.User;
 import com.exam.services.ExamService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Enumeration;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -48,23 +43,6 @@ public class ExamController {
         return "step4";
     }
 
-//    @PostMapping("/submit")
-//    public String submitAnswers(@RequestParam Long userId, @RequestParam Map<String, String> answersMap, Model model)
-//    {
-//        for (String answerString : answersMap.values()) {
-//            try {
-//                Long answerId = Long.parseLong(answerString);
-//                System.out.println("answerId = " + answerId);
-//                examService.saveSelectedAnswerForUser(userId, answerId);
-//            } catch (NumberFormatException ex) {
-//                System.err.println("Invalid answer ID format: " + answerString);
-//            }
-//        }
-//
-//        int score = examService.calculateScoreForUser(userId);
-//        model.addAttribute("score", score);
-//        return "result";
-//    }
 
     @PostMapping("/submit")
     public String submitAnswer(@RequestParam(name = "userId") Long userId,
@@ -88,7 +66,8 @@ public class ExamController {
         Question nextQuestion = examService.getNextQuestion();
 
         if (nextQuestion == null) {
-            return "redirect:/examFinished"; // Or wherever you want to redirect when the exam is finished
+            return "redirect:/exam/result/" + userId;
+            // Or wherever you want to redirect when the exam is finished
         }
 
         model.addAttribute("question", nextQuestion);
@@ -98,12 +77,22 @@ public class ExamController {
     }
 
 
-    @GetMapping("/result")
-    public String displayResult(@ModelAttribute User user, Model model) {
-        int score = examService.calculateScoreForUser(user.getId());
+
+    @GetMapping("/result/{userId}")
+    public String displayResult(@PathVariable Long userId, Model model) {
+        User user = examService.getUserById(userId); // You'd need to have such a method in your service
+        if (user == null) {
+            // handle the case where the user is not found
+            return "errorPage"; // replace with your error page/view
+        }
+
+        int score = examService.calculateScoreForUser(userId);
         String rating = determineRating(score);
+
+        model.addAttribute("user", user);  // <-- This is the missing part
         model.addAttribute("score", score);
         model.addAttribute("rating", rating);
+
         return "step17";
     }
 
