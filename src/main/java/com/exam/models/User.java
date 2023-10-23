@@ -22,9 +22,9 @@ public class User {
     private String lastName;
 
 
-    private Integer score;
+    private Integer score = 0;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Answer> answers;
 
     public void addAnswer(Answer answer) {

@@ -55,6 +55,7 @@ public class ExamController {
         List<String> answerKeys = allRequestParams.keySet().stream()
                 .filter(k -> k.startsWith("answerForQuestion_"))
                 .toList();
+        User userById = examService.getUserById(userId);
 
         if (!answerKeys.isEmpty()) {
             // Take the first key to get the current question ID
@@ -92,7 +93,7 @@ public class ExamController {
         }
 
         model.addAttribute("question", nextQuestion);
-        model.addAttribute("user", examService.getUserById(userId)); // Assumes you have a method to get a user by ID
+        model.addAttribute("user", userById); // Assumes you have a method to get a user by ID
 
         return "step4";
     }
@@ -108,7 +109,7 @@ public class ExamController {
             return "errorPage"; // replace with your error page/view
         }
 
-        int score = examService.calculateScoreForUser(userId);
+        int score = examService.getScoreByUserId(userId);
         String rating = determineRating(score);
 
         model.addAttribute("user", user);  // <-- This is the missing part
@@ -119,10 +120,20 @@ public class ExamController {
     }
 
     private String determineRating(int score) {
-        if (score >= 56) return "12";
-        if (score >= 51) return "11";
-        if (score >= 46) return "10";
-        return "0";
+        if (score >= 56 && score <= 60) return "12";
+        if (score >= 51 && score <= 55) return "11";
+        if (score >= 46 && score <= 50) return "10";
+        if (score >= 41 && score <= 45) return "9";
+        if (score >= 36 && score <= 40) return "8";
+        if (score >= 31 && score <= 35) return "7";
+        if (score >= 26 && score <= 30) return "6";
+        if (score >= 21 && score <= 25) return "5";
+        if (score >= 16 && score <= 20) return "4";
+        if (score >= 11 && score <= 15) return "3";
+        if (score >= 6 && score <= 10) return "2";
+        if (score >= 1 && score <= 5) return "1";
+        if (score == 0) return "0";
+        return "Invalid Score"; // This is just to handle any scores that might fall outside the ranges provided.
     }
 
 }

@@ -2,8 +2,8 @@ server:
   port: 8181
 
 spring:
-  mvc:
-    bind-to-list: true
+  thymeleaf:
+    cache: false
 
   datasource:
     url: jdbc:postgresql://localhost:5435/exam_db
