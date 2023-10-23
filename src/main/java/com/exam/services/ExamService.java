@@ -130,15 +130,27 @@ public class ExamService {
     @Transactional
     public void incrementUserScore(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found")); // Assuming you have a UserRepository
-        user.setScore(user.getScore() + 1);
+        Integer currentScore = user.getScore();
+        System.out.println("currentScore = " + currentScore);
 
+        if (currentScore == null) {
+            currentScore = 0;
+        }
+
+        user.setScore(currentScore + 1);
         System.out.println("user = " + user);
-        userRepository.save(user); // Save updated user score
+        User saved = userRepository.save(user);// Save updated user score
+        System.out.println("saved = " + saved);
     }
+
 
     public int getNumberOfCorrectAnswers(Long currentQuestionId) {
         return answerRepository.findByQuestionIdAndIsCorrectTrue(currentQuestionId).size();
 
+    }
+
+    public int getScoreByUserId(Long userId) {
+        return userRepository.findById(userId).orElseThrow().getScore();
     }
 }
 
