@@ -5,10 +5,12 @@ import com.exam.models.User;
 import com.exam.services.ExamService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +50,7 @@ public class ExamController {
 
     @PostMapping("/submit")
     public String submitAnswer(@RequestParam(name = "userId") Long userId,
-                               @RequestParam Map<String, String[]> allRequestParams,
+                               @RequestParam MultiValueMap<String, String> allRequestParams,
                                Model model) {
 
         // All keys that start with "answerForQuestion_" are related to answers
@@ -64,17 +66,11 @@ public class ExamController {
 
             // Iterate over all submitted answers for the question
             for (String answerKey : answerKeys) {
-                Object answerValue = allRequestParams.get(answerKey);
-                String[] submittedAnswers;
+                List<String> submittedAnswers = allRequestParams.get(answerKey);
+//                System.out.println("submittedAnswers = " + submittedAnswers);
 
-                if (answerValue == null) {
-                    continue;  // Skip processing for null values
-                } else if (answerValue instanceof String[]) {
-                    submittedAnswers = (String[]) answerValue;
-                } else if (answerValue instanceof String) {
-                    submittedAnswers = new String[]{(String) answerValue};
-                } else {
-                    throw new IllegalArgumentException("Unexpected type for answer value.");
+                if (submittedAnswers == null || submittedAnswers.isEmpty()) {
+                    continue;  // Skip processing for null or empty values
                 }
 
                 for (String submittedAnswer : submittedAnswers) {
