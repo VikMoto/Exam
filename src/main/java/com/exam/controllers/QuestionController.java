@@ -8,19 +8,13 @@ import com.exam.services.CardService;
 import com.exam.services.QuestionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/teacher")
 public class QuestionController {
-
 
     private final QuestionService questionService;
     private final CardService cardService;
@@ -33,21 +27,28 @@ public class QuestionController {
     }
 
 
+
     @GetMapping("/addQuestion")
     public String showAddQuestionForm(Model model) {
         model.addAttribute("answerCount", answerCount);
         return "addQuestion";  // Name of the Thymeleaf template
     }
 
-    @GetMapping("/addAnswerField/{cardId}")
+    @GetMapping("/addAnswerField")
     public String addAnswerField() {
         answerCount++;
         return "redirect:/teacher/addQuestion";
     }
 
-    @PostMapping("/addQuestion/{cardId}")
-    public String handleQuestionSubmission(QuestionDTO questionDto, @RequestParam Map<String, String> params) {
-        System.out.println("Received DTO: " + questionDto);
+    @PostMapping("/addQuestion")
+    public String handleQuestionSubmission(QuestionDTO questionDto, @RequestParam Map<String, String> params,
+                                           @SessionAttribute(name = "currentCard", required = false) Card currentCard) {
+        // Check if there's a current card in the session
+        if (currentCard == null) {
+            // If not, create a new card
+            currentCard = new Card();
+            cardService.saveCard(currentCard);
+        }
 
         Question question = new Question();
         question.setContent(questionDto.getContent());
@@ -70,6 +71,8 @@ public class QuestionController {
             }
         }
 
+        // Set the current card for the question
+        question.setCard(currentCard);
         questionService.saveQuestion(question);
 
         return "redirect:/teacher/addQuestion";
@@ -77,37 +80,40 @@ public class QuestionController {
 
     @GetMapping("/addCard")
     public String showAddCardForm(Model model) {
+        model.addAttribute("questionCount", answerCount); // Add questionCount to the model
         return "addCard";  // Name of the Thymeleaf template for adding a card
     }
 
+//    @GetMapping("/addCard")
+//    public String showAddCardForm() {
+//        return "addCard";  // Name of the Thymeleaf template for adding a card
+//    }
+
     @PostMapping("/addCard")
-    public String handleCardSubmission(@RequestParam("cardName") String cardName) {
+    public String handleCardSubmission(@RequestParam("cardName") String cardName,
+                                       @RequestParam Map<String, String> params) {
+        // Create a new card and save it to the database
         Card card = new Card();
         card.setName(cardName);
+        Card saveCard = cardService.saveCard(card);
 
-        List<Question> questions = new ArrayList<>();
+        // Extract the newly created card's ID
+        Long cardId = saveCard.getId();
 
-        // Add 5 or more questions to the card
-        for (int i = 1; i <= 5; i++) {
-            Question question = new Question();
-            question.setContent("Question " + i);
-            question.setQuestionOrder(i);
-            question.setCard(card);
-            questions.add(question);
-        }
-
-        card.setQuestions(questions);
-
-        // Save the card and questions to the database using your repository and service classes
-        cardService.saveCard(card);
-        return "redirect:/teacher/addCard";
+        // Redirect to the question adding page with the card's ID as a parameter
+        return "redirect:/teacher/addQuestions?cardId=" + cardId;
     }
 
     @GetMapping("/resetQuestionForm")
     public String resetQuestionForm() {
         answerCount = 4; // Reset to the initial count
-        return "redirect:/teacher/addQuestion";
+        return "redirect:/teacher/addCard";
     }
 
-
+    @GetMapping("/endQuestionForm")
+    public String endQuestionForm(SessionStatus sessionStatus) {
+        // Complete the session for the current card
+        sessionStatus.setComplete();
+        return "redirect:/teacher/addCard";
+    }
 }

@@ -2,37 +2,62 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
-    <!-- ... (head section remains the same) ... -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Card and Questions</title>
+
+    <!-- Include Bootstrap CSS (Bootstrap 4) -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
 <body>
 <div class="container mt-5">
     <div class="card">
         <div class="card-header">
-            <h2 class="mb-0">Add a Card</h2>
+            <h2 class="mb-0">Add a Card and Questions</h2>
         </div>
         <div class="card-body">
-            <form th:action="@{/teacher/addCard}" method="post">
-                <div class="form-group">
-                    <label for="cardName">Card Name:</label>
+            <form th:action="@{/teacher/addQuestion}" method="post">
+                <div class="mb-3">
+                    <label for="cardName" class="form-label">Card Name:</label>
                     <input type="text" class="form-control" id="cardName" name="cardName" required>
                 </div>
 
-                <!-- Add fields for 5 questions -->
-                <th:block th:each="i, iStat : ${#numbers.sequence(1, 5)}">
-                    <div class="form-group">
-                        <label th:for="${'question_' + iStat.count}" th:text="${'Question ' + iStat.count}"></label>
-                        <input type="text" class="form-control" th:id="${'question_' + iStat.count}" th:name="${'question_' + iStat.count}" required>
-                    </div>
-                </th:block>
 
+                <!-- Button to Add More Question Fields -->
+                <button type="button" class="btn btn-secondary" id="addQuestionField">Add Question</button>
+
+                <!-- Submit Button -->
                 <button type="submit" class="btn btn-primary mt-3">Add Card</button>
             </form>
         </div>
     </div>
 </div>
 
-<!-- ... (remaining body and script sections remain the same) ... -->
+<!-- JavaScript to Add More Question Fields -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const addQuestionFieldButton = document.getElementById("addQuestionField");
+        const form = document.querySelector("form");
+        let questionCount = 1; // Initial question count
+
+        addQuestionFieldButton.addEventListener("click", function () {
+            questionCount++;
+            const newQuestionField = document.createElement("div");
+            newQuestionField.classList.add("mb-3");
+            newQuestionField.innerHTML = `
+                <label for="question_${questionCount}" class="form-label">Question ${questionCount}:</label>
+                <input type="text" class="form-control" id="question_${questionCount}" name="question_${questionCount}" required>
+            `;
+            form.insertBefore(newQuestionField, addQuestionFieldButton);
+        });
+    });
+</script>
+
+<!-- Include Bootstrap JS (Bootstrap 4) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>
