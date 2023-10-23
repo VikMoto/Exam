@@ -18,6 +18,12 @@
         </div>
         <div class="card-body">
             <form th:action="@{/teacher/addQuestion}" method="post">
+                <!-- Input field for Card ID -->
+                <div class="form-group">
+                    <label for="cardId">Card ID:</label>
+                    <input type="text" class="form-control" id="cardId" name="cardId" required>
+                </div>
+
                 <div class="form-group">
                     <label for="content">Question:</label>
                     <input type="text" class="form-control" id="content" name="content" required>
@@ -41,8 +47,8 @@
 
                 <!-- Input field for 'order' -->
                 <div class="form-group">
-                    <label for="order">Order:</label>
-                    <input type="number" class="form-control" id="order" name="order" required>
+                    <label for="questionOrder">Order:</label>
+                    <input type="number" class="form-control" id="questionOrder" name="questionOrder" required>
                 </div>
 
                 <!-- Here you could add a server-side route to increase the number of answer fields -->
@@ -63,5 +69,3 @@
 </body>
 
 </html>
-
-

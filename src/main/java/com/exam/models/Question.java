@@ -18,13 +18,16 @@ public class Question {
     private Long id;
     private String content;
 
-    @Column(name="order_qu")
-    private Integer order;  // This represents the order of the question
+    @Column(name="question_order")
+    private Integer questionOrder;  // This represents the order of the question
 
 
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "card_id") // Define the foreign key column name
+    private Card card;
     public void addAnswer(Answer answer) {
         answers.add(answer);
         answer.setQuestion(this);
