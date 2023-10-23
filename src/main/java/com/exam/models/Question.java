@@ -1,16 +1,14 @@
 package com.exam.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Data
+@ToString(exclude = "answers") // This will exclude the answers field from the generated toString() method
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -20,7 +18,7 @@ public class Question {
     private Long id;
     private String content;
 
-    @Column(name="question_order")
+    @Column(name="order_qu")
     private Integer order;  // This represents the order of the question
 
 

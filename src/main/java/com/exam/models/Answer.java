@@ -6,6 +6,7 @@ import lombok.*;
 @Entity
 @Data
 @Getter
+@ToString(exclude = "question") // This will exclude the question field from the generated toString() method
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

@@ -39,6 +39,12 @@
                     </div>
                 </th:block>
 
+                <!-- Input field for 'order' -->
+                <div class="form-group">
+                    <label for="order">Order:</label>
+                    <input type="number" class="form-control" id="order" name="order" required>
+                </div>
+
                 <!-- Here you could add a server-side route to increase the number of answer fields -->
                 <a th:href="@{/teacher/addAnswerField}" class="btn btn-outline-secondary mb-3">Add Another Answer</a>
                 <button type="submit" class="btn btn-primary mt-3">Add Question</button>
@@ -57,4 +63,5 @@
 </body>
 
 </html>
+
 

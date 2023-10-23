@@ -5,10 +5,12 @@ import com.exam.models.User;
 import com.exam.services.ExamService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
+import java.util.List;
+
 
 @Controller
 @RequestMapping("/exam")
@@ -46,21 +48,40 @@ public class ExamController {
 
     @PostMapping("/submit")
     public String submitAnswer(@RequestParam(name = "userId") Long userId,
-                               @RequestParam Map<String, String> allRequestParams,
+                               @RequestParam MultiValueMap<String, String> allRequestParams,
                                Model model) {
 
-        // Extract and process submitted answer here (you can retrieve it from allRequestParams)
-
-        // Set the current question ID for the service
-        String answerKey = allRequestParams.keySet().stream()
+        // All keys that start with "answerForQuestion_" are related to answers
+        List<String> answerKeys = allRequestParams.keySet().stream()
                 .filter(k -> k.startsWith("answerForQuestion_"))
-                .findFirst()
-                .orElse(null);
+                .toList();
 
-        if (answerKey != null) {
-            String[] parts = answerKey.split("_");
+        if (!answerKeys.isEmpty()) {
+            // Take the first key to get the current question ID
+            String[] parts = answerKeys.get(0).split("_");
             Long currentQuestionId = Long.parseLong(parts[1]);
             examService.setCurrentQuestionId(currentQuestionId);
+
+            int correctAnswersCount = 0; // To keep track of correct answers for a given question
+            // Iterate over all submitted answers for the question
+            for (String answerKey : answerKeys) {
+                List<String> submittedAnswers = allRequestParams.get(answerKey);
+//                System.out.println("submittedAnswers = " + submittedAnswers);
+
+                if (submittedAnswers == null || submittedAnswers.isEmpty()) {
+                    continue;  // Skip processing for null or empty values
+                }
+
+                for (String submittedAnswer : submittedAnswers) {
+                    if (examService.isAnswerCorrect(currentQuestionId, submittedAnswer)) {
+                        correctAnswersCount++;
+                    }
+                }
+            }
+            // Check if the user got all answers correct
+            if (correctAnswersCount == examService.getNumberOfCorrectAnswers(currentQuestionId)) {
+                examService.incrementUserScore(userId);
+            }
         }
 
         Question nextQuestion = examService.getNextQuestion();
@@ -75,6 +96,7 @@ public class ExamController {
 
         return "step4";
     }
+
 
 
 

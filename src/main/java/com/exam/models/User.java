@@ -20,8 +20,20 @@ public class User {
     private Long id;
     private String firstName;
     private String lastName;
-    private int score;
 
-    @OneToMany(mappedBy = "user")
+
+    private Integer score;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Answer> answers;
+
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
+        answer.setUser(this);
+    }
+    public void removeAnswer(Answer answer) {
+        answers.remove(answer);
+        answer.setUser(null);
+    }
+
 }
