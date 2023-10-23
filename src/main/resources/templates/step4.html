@@ -27,11 +27,12 @@
                     <th:block th:each="answer : ${question.answers}">
                         <div class="form-check">
                             <label>
-                                <input class="form-check-input" type="radio" th:value="${answer.id}" th:name="${'answerForQuestion_' + question.id}" required>
+                                <input class="form-check-input" type="checkbox" th:value="${answer.id}" th:name="${'answerForQuestion_' + question.id}">
                             </label>
                             <label class="form-check-label" th:text="${answer.content}"></label>
                         </div>
                     </th:block>
+
                 </fieldset>
 
                 <button type="submit" class="btn btn-primary mt-3">Submit Answer</button>
@@ -45,6 +46,17 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Custom JS to check for checkboxes before submission -->
+<script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        let checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        let checkedOne = Array.prototype.slice.call(checkboxes).some(x => x.checked);
+        if (!checkedOne) {
+            alert('Please select at least one answer before proceeding.');
+            e.preventDefault(); // Prevent form submission
+        }
+    });
+</script>
 </body>
 
 </html>

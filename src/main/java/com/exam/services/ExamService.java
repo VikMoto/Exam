@@ -110,5 +110,25 @@ public class ExamService {
         this.currentQuestionId = id;
     }
 
+    public boolean isAnswerCorrect(Long questionId, String submittedAnswer) {
+        // Fetch all the correct answers for the given question from the database
+        List<Answer> correctAnswers = answerRepository.findByQuestionIdAndIsCorrectTrue(questionId);
+
+        // Check if the submittedAnswer matches any of the correct answers for the given question
+        for (Answer correctAnswer : correctAnswers) {
+            if (correctAnswer.getContent().equalsIgnoreCase(submittedAnswer)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void incrementUserScore(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found")); // Assuming you have a UserRepository
+        user.setScore(user.getScore() + 1);
+        userRepository.save(user); // Save updated user score
+    }
+
 }
 
