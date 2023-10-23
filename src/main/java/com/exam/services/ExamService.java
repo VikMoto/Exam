@@ -7,6 +7,8 @@ import com.exam.repo.AnswerRepository;
 import com.exam.repo.QuestionRepository;
 import com.exam.repo.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -113,10 +115,11 @@ public class ExamService {
     public boolean isAnswerCorrect(Long questionId, String submittedAnswer) {
         // Fetch all the correct answers for the given question from the database
         List<Answer> correctAnswers = answerRepository.findByQuestionIdAndIsCorrectTrue(questionId);
-
+//        System.out.println("correctAnswers = " + correctAnswers);
+//        System.out.println("submittedAnswer = " + submittedAnswer);
         // Check if the submittedAnswer matches any of the correct answers for the given question
         for (Answer correctAnswer : correctAnswers) {
-            if (correctAnswer.getContent().equalsIgnoreCase(submittedAnswer)) {
+            if (correctAnswer.getId()== Long.parseLong(submittedAnswer)) {
                 return true;
             }
         }
@@ -124,11 +127,18 @@ public class ExamService {
         return false;
     }
 
+    @Transactional
     public void incrementUserScore(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found")); // Assuming you have a UserRepository
         user.setScore(user.getScore() + 1);
+
+        System.out.println("user = " + user);
         userRepository.save(user); // Save updated user score
     }
 
+    public int getNumberOfCorrectAnswers(Long currentQuestionId) {
+        return answerRepository.findByQuestionIdAndIsCorrectTrue(currentQuestionId).size();
+
+    }
 }
 

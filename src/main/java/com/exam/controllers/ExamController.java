@@ -9,10 +9,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+
 
 @Controller
 @RequestMapping("/exam")
@@ -64,6 +62,7 @@ public class ExamController {
             Long currentQuestionId = Long.parseLong(parts[1]);
             examService.setCurrentQuestionId(currentQuestionId);
 
+            int correctAnswersCount = 0; // To keep track of correct answers for a given question
             // Iterate over all submitted answers for the question
             for (String answerKey : answerKeys) {
                 List<String> submittedAnswers = allRequestParams.get(answerKey);
@@ -75,9 +74,13 @@ public class ExamController {
 
                 for (String submittedAnswer : submittedAnswers) {
                     if (examService.isAnswerCorrect(currentQuestionId, submittedAnswer)) {
-                        examService.incrementUserScore(userId);
+                        correctAnswersCount++;
                     }
                 }
+            }
+            // Check if the user got all answers correct
+            if (correctAnswersCount == examService.getNumberOfCorrectAnswers(currentQuestionId)) {
+                examService.incrementUserScore(userId);
             }
         }
 
