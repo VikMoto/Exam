@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Card and Questions</title>
+
+    <!-- Include Bootstrap CSS (Bootstrap 4) -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="mb-0">Add a Card and Questions</h2>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/teacher/addQuestion}" method="post">
+                <div class="mb-3">
+                    <label for="cardName" class="form-label">Card Name:</label>
+                    <input type="text" class="form-control" id="cardName" name="cardName" required>
+                </div>
+
+
+                <!-- Button to Add More Question Fields -->
+                <button type="button" class="btn btn-secondary" id="addQuestionField">Add Question</button>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary mt-3">Add Card</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript to Add More Question Fields -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const addQuestionFieldButton = document.getElementById("addQuestionField");
+        const form = document.querySelector("form");
+        let questionCount = 1; // Initial question count
+
+        addQuestionFieldButton.addEventListener("click", function () {
+            questionCount++;
+            const newQuestionField = document.createElement("div");
+            newQuestionField.classList.add("mb-3");
+            newQuestionField.innerHTML = `
+                <label for="question_${questionCount}" class="form-label">Question ${questionCount}:</label>
+                <input type="text" class="form-control" id="question_${questionCount}" name="question_${questionCount}" required>
+            `;
+            form.insertBefore(newQuestionField, addQuestionFieldButton);
+        });
+    });
+</script>
+
+<!-- Include Bootstrap JS (Bootstrap 4) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

@@ -83,13 +83,13 @@ public class ExamService {
     }
 
     public Question getFirstQuestion() {
-        return questionRepository.findFirstByOrderByOrderAsc();
+        return questionRepository.findFirstByOrderByQuestionOrderAsc();
     }
 
     public Question getNextQuestion(Long currentQuestionId) {
         Question currentQuestion = questionRepository.findById(currentQuestionId).orElse(null);
         if (currentQuestion != null) {
-            return questionRepository.findByOrderGreaterThanOrderByOrderAsc(currentQuestion.getOrder()).stream()
+            return questionRepository.findByQuestionOrderGreaterThanOrderByQuestionOrderAsc(currentQuestion.getQuestionOrder()).stream()
                             .findFirst()
                             .orElse(null);
         }
@@ -98,11 +98,11 @@ public class ExamService {
 
     public Question getNextQuestion() {
         if (currentQuestionId == null) {
-            return questionRepository.findFirstByOrderByOrderAsc();
+            return questionRepository.findFirstByOrderByQuestionOrderAsc();
         } else {
             Question currentQuestion = questionRepository.findById(currentQuestionId).orElse(null);
             if (currentQuestion != null) {
-                return questionRepository.findFirstByOrderGreaterThanOrderByOrderAsc(currentQuestion.getOrder());
+                return questionRepository.findFirstByQuestionOrderGreaterThanOrderByQuestionOrderAsc(currentQuestion.getQuestionOrder());
             }
         }
         return null;
