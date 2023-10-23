@@ -84,10 +84,6 @@ public class QuestionController {
         return "addCard";  // Name of the Thymeleaf template for adding a card
     }
 
-//    @GetMapping("/addCard")
-//    public String showAddCardForm() {
-//        return "addCard";  // Name of the Thymeleaf template for adding a card
-//    }
 
     @PostMapping("/addCard")
     public String handleCardSubmission(@RequestParam("cardName") String cardName,
