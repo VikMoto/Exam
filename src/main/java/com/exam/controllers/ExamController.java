@@ -27,6 +27,7 @@ public class ExamController {
         return "index";
     }
 
+
     @PostMapping("/register")
     public String register(User user, Model model) {
         examService.saveUser(user);

@@ -1,0 +1,22 @@
+server:
+  port: 8181
+
+spring:
+  mvc:
+    bind-to-list: true
+
+  datasource:
+    url: jdbc:postgresql://localhost:5435/exam_db
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: public
+
+
+

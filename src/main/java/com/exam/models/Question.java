@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,6 +21,11 @@ public class Question {
     private String content;
 
     @OneToMany(mappedBy = "question")
-    private List<Answer> answers;
+    private List<Answer> answers = new ArrayList<>();
+
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
+        answer.setQuestion(this);
+    }
 
 }
