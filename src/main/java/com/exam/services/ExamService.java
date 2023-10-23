@@ -8,11 +8,12 @@ import com.exam.repo.QuestionRepository;
 import com.exam.repo.UserRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ExamService {
 
-
+    private Long currentQuestionId = null;
     private final UserRepository userRepository;
 
 
@@ -66,5 +67,48 @@ public class ExamService {
 
         return score;
     }
+
+    public User getUserById(Long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            return userOptional.get();
+        }
+        throw new RuntimeException("User not found with id: " + userId);  // Or handle this scenario as needed
+    }
+
+    public User getLatestRegisteredUser() {
+        return userRepository.findTopByOrderByIdDesc().orElse(null);
+    }
+
+    public Question getFirstQuestion() {
+        return questionRepository.findFirstByOrderByOrderAsc();
+    }
+
+    public Question getNextQuestion(Long currentQuestionId) {
+        Question currentQuestion = questionRepository.findById(currentQuestionId).orElse(null);
+        if (currentQuestion != null) {
+            return questionRepository.findByOrderGreaterThanOrderByOrderAsc(currentQuestion.getOrder()).stream()
+                            .findFirst()
+                            .orElse(null);
+        }
+        return null;
+    }
+
+    public Question getNextQuestion() {
+        if (currentQuestionId == null) {
+            return questionRepository.findFirstByOrderByOrderAsc();
+        } else {
+            Question currentQuestion = questionRepository.findById(currentQuestionId).orElse(null);
+            if (currentQuestion != null) {
+                return questionRepository.findFirstByOrderGreaterThanOrderByOrderAsc(currentQuestion.getOrder());
+            }
+        }
+        return null;
+    }
+
+    public void setCurrentQuestionId(Long id) {
+        this.currentQuestionId = id;
+    }
+
 }
 

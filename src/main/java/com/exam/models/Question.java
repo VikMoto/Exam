@@ -20,6 +20,10 @@ public class Question {
     private Long id;
     private String content;
 
+    @Column(name="question_order")
+    private Integer order;  // This represents the order of the question
+
+
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
 

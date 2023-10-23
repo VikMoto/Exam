@@ -7,14 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/exam")
 public class ExamController {
-
 
     private final ExamService examService;
 
@@ -27,7 +25,6 @@ public class ExamController {
         return "index";
     }
 
-
     @PostMapping("/register")
     public String register(User user, Model model) {
         examService.saveUser(user);
@@ -36,42 +33,76 @@ public class ExamController {
     }
 
     @GetMapping("/start")
-    public String startExam(@ModelAttribute User user, Model model) {
-        List<Question> questions = examService.getAllQuestions();
-        model.addAttribute("questions", questions);
-        model.addAttribute("currentUser", user);
-        return "step4";  // Assuming step4.html displays the questions.
+    public String startExam(Model model) {
+        User user = examService.getLatestRegisteredUser();
+        Question firstQuestion = examService.getFirstQuestion();
+
+        model.addAttribute("question", firstQuestion);
+        model.addAttribute("user", user);
+
+        return "step4";
     }
+
 
     @PostMapping("/submit")
-    public String submitAnswers(@ModelAttribute User user, @RequestParam List<Long> answerIds, Model model) {
-        for (Long answerId : answerIds) {
-            examService.saveSelectedAnswerForUser(user.getId(), answerId);
+    public String submitAnswer(@RequestParam(name = "userId") Long userId,
+                               @RequestParam Map<String, String> allRequestParams,
+                               Model model) {
+
+        // Extract and process submitted answer here (you can retrieve it from allRequestParams)
+
+        // Set the current question ID for the service
+        String answerKey = allRequestParams.keySet().stream()
+                .filter(k -> k.startsWith("answerForQuestion_"))
+                .findFirst()
+                .orElse(null);
+
+        if (answerKey != null) {
+            String[] parts = answerKey.split("_");
+            Long currentQuestionId = Long.parseLong(parts[1]);
+            examService.setCurrentQuestionId(currentQuestionId);
         }
 
-        int score = examService.calculateScoreForUser(user.getId());
-        model.addAttribute("score", score);
-        return "result";  // Assuming result.html displays the user's score.
+        Question nextQuestion = examService.getNextQuestion();
+
+        if (nextQuestion == null) {
+            return "redirect:/exam/result/" + userId;
+            // Or wherever you want to redirect when the exam is finished
+        }
+
+        model.addAttribute("question", nextQuestion);
+        model.addAttribute("user", examService.getUserById(userId)); // Assumes you have a method to get a user by ID
+
+        return "step4";
     }
 
-    @GetMapping("/result")
-    public String displayResult(@ModelAttribute User user, Model model) {
-        int score = examService.calculateScoreForUser(user.getId());
+
+
+    @GetMapping("/result/{userId}")
+    public String displayResult(@PathVariable Long userId, Model model) {
+        User user = examService.getUserById(userId); // You'd need to have such a method in your service
+        if (user == null) {
+            // handle the case where the user is not found
+            return "errorPage"; // replace with your error page/view
+        }
+
+        int score = examService.calculateScoreForUser(userId);
         String rating = determineRating(score);
+
+        model.addAttribute("user", user);  // <-- This is the missing part
         model.addAttribute("score", score);
         model.addAttribute("rating", rating);
-        return "step17";  // Assuming step17.html displays detailed results.
+
+        return "step17";
     }
 
     private String determineRating(int score) {
         if (score >= 56) return "12";
         if (score >= 51) return "11";
         if (score >= 46) return "10";
-        // ... and so on for each range.
-        return "0";  // Default if none of the above.
+        return "0";
     }
 
-    // You can add more methods as needed for the rest of the steps.
 }
 
 
