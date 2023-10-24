@@ -14,19 +14,14 @@
 <div class="container mt-5">
     <div class="card">
         <div class="card-header">
-            <h2 class="mb-0">Add a Card and Questions</h2>
+            <h2 class="mb-0">Add a Card</h2>
         </div>
         <div class="card-body">
-            <form th:action="@{/teacher/addQuestion}" method="post">
+            <form th:action="@{/teacher/addCard}" method="post">
                 <div class="mb-3">
                     <label for="cardName" class="form-label">Card Name:</label>
                     <input type="text" class="form-control" id="cardName" name="cardName" required>
                 </div>
-
-
-                <!-- Button to Add More Question Fields -->
-                <button type="button" class="btn btn-secondary" id="addQuestionField">Add Question</button>
-
                 <!-- Submit Button -->
                 <button type="submit" class="btn btn-primary mt-3">Add Card</button>
             </form>

@@ -14,6 +14,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/teacher")
+@SessionAttributes("currentCard") // Ensure the card is stored in the session
 public class QuestionController {
 
     private final QuestionService questionService;
@@ -29,7 +30,12 @@ public class QuestionController {
 
 
     @GetMapping("/addQuestion")
-    public String showAddQuestionForm(Model model) {
+    public String showAddQuestionForm(@RequestParam(name = "cardId", required = false) Long cardId, Model model) {
+        if (cardId != null) {
+            // Fetch the card using the provided ID
+            Card currentCard = cardService.getCardById(cardId).orElseThrow();
+            model.addAttribute("currentCard", currentCard);
+        }
         model.addAttribute("answerCount", answerCount);
         return "addQuestion";  // Name of the Thymeleaf template
     }
@@ -44,6 +50,7 @@ public class QuestionController {
     public String handleQuestionSubmission(QuestionDTO questionDto, @RequestParam Map<String, String> params,
                                            @SessionAttribute(name = "currentCard", required = false) Card currentCard) {
         // Check if there's a current card in the session
+        System.out.println("currentCard = " + currentCard);
         if (currentCard == null) {
             // If not, create a new card
             currentCard = new Card();
@@ -94,10 +101,12 @@ public class QuestionController {
         Card saveCard = cardService.saveCard(card);
 
         // Extract the newly created card's ID
+        System.out.println("saveCard = " + saveCard);
         Long cardId = saveCard.getId();
 
+
         // Redirect to the question adding page with the card's ID as a parameter
-        return "redirect:/teacher/addQuestions?cardId=" + cardId;
+        return "redirect:/teacher/addQuestion?cardId=" + cardId;
     }
 
     @GetMapping("/resetQuestionForm")
