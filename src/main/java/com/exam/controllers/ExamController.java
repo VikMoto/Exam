@@ -40,10 +40,13 @@ public class ExamController {
         Question firstQuestion = examService.getFirstQuestion();
 
         model.addAttribute("question", firstQuestion);
-        if (firstQuestion.getImagePath() != null) {
+        model.addAttribute("user", user);
+
+        // Check if the first question has an associated imagePath and add to model
+        if (firstQuestion != null && firstQuestion.getImagePath() != null) {
+            System.out.println("firstQuestion.getImagePath() = " + firstQuestion.getImagePath());
             model.addAttribute("imagePath", firstQuestion.getImagePath());
         }
-        model.addAttribute("user", user);
 
         return "step4";
     }
@@ -59,6 +62,7 @@ public class ExamController {
                 .filter(k -> k.startsWith("answerForQuestion_"))
                 .toList();
         User userById = examService.getUserById(userId);
+
 
         if (!answerKeys.isEmpty()) {
             // Take the first key to get the current question ID
@@ -89,14 +93,20 @@ public class ExamController {
         }
 
         Question nextQuestion = examService.getNextQuestion();
+
+
         if (nextQuestion != null && nextQuestion.getImagePath() != null) {
             model.addAttribute("imagePath", nextQuestion.getImagePath());
+            System.out.println("nextQuestion.getImagePath() = " + nextQuestion.getImagePath());
         }
+
 
         if (nextQuestion == null) {
             return "redirect:/exam/result/" + userId;
             // Or wherever you want to redirect when the exam is finished
         }
+
+
 
         model.addAttribute("question", nextQuestion);
         model.addAttribute("user", userById); // Assumes you have a method to get a user by ID

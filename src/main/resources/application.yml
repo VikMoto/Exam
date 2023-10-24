@@ -2,6 +2,8 @@ server:
   port: 8181
 
 spring:
+  mvc:
+    static-path-pattern: /static/**
   servlet:
     multipart:
       max-file-size: 128MB
@@ -21,15 +23,13 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         default_schema: public
-    show-sql: true
+    show-sql: false
+  # Define the directory path
   web:
     resources:
-      static-locations:
-        - classpath:/static/
-        - classpath:/public/
-        - classpath:/resources/
-        - classpath:/META-INF/resources/
-        - file:./uploads/
+      static-locations: classpath:/static/
+
+
 
 
 
