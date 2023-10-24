@@ -2,6 +2,8 @@ server:
   port: 8181
 
 spring:
+  mvc:
+    static-path-pattern: /static/**
   servlet:
     multipart:
       max-file-size: 128MB
@@ -23,6 +25,9 @@ spring:
         default_schema: public
     show-sql: false
   # Define the directory path
+  web:
+    resources:
+      static-locations: classpath:/static/
 
 
 

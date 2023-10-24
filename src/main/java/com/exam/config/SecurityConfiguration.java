@@ -28,7 +28,8 @@ public class SecurityConfiguration {
                     authorizeHttpRequests
                             .requestMatchers(
                 "/exam/**",
-                "/uploads/**"
+                "/uploads/**",
+                "/static/images/**"
         )
           .permitAll()
         .anyRequest()

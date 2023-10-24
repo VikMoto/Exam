@@ -17,13 +17,8 @@
             <h2 class="mb-0">Answer the Question</h2>
         </div>
         <div class="card-body">
-            <!-- Image Display if available -->
-            <div th:if="${imagePath != null}" class="mb-3">
-                <img th:src="@{${imagePath}}" alt="Question Image" class="img-fluid">
-                <img src="/uploads/images/photo_2023-10-23_20-10-14.jpg" alt="Image">
-
-            </div>
-
+            <!-- Display image for the question if it exists -->
+            <img th:if="${imagePath}" th:src="@{${imagePath}}" alt="Question Image" class="img-fluid mb-3">
 
             <form th:action="@{/exam/submit}" method="post">
                 <!-- Hidden input for capturing user's ID -->

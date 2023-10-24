@@ -11,8 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -58,8 +56,7 @@ public class QuestionController {
     public String handleQuestionSubmission(QuestionDTO questionDto,
                                            @RequestParam Map<String, String> params,
                                            @RequestParam(name = "imageFile", required = false) MultipartFile imageFile,
-                                           @SessionAttribute(name = "currentCard", required = false) Card currentCard)
-                                           throws IOException {
+                                           @SessionAttribute(name = "currentCard", required = false) Card currentCard) {
         // Check if there's a current card in the session
         if (currentCard == null) {
             // If not, create a new card
@@ -72,13 +69,13 @@ public class QuestionController {
 
         try {
             if (imageFile != null && !imageFile.isEmpty()) {
-                Path uploadDir = Paths.get("/images");
+                Path uploadDir = Paths.get("src/main/resources/static/images/");
                 if (!Files.exists(uploadDir)) {
                     Files.createDirectories(uploadDir);
                 }
                 Path imagePath = uploadDir.resolve(Objects.requireNonNull(imageFile.getOriginalFilename()));
                 Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
-                question.setImagePath("/images/" + imageFile.getOriginalFilename());
+                question.setImagePath("/static/images/" + imageFile.getOriginalFilename());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -119,8 +116,7 @@ public class QuestionController {
 
 
     @PostMapping("/addCard")
-    public String handleCardSubmission(@RequestParam("cardName") String cardName,
-                                       @RequestParam Map<String, String> params) {
+    public String handleCardSubmission(@RequestParam("cardName") String cardName) {
         // Create a new card and save it to the database
         Card card = new Card();
         card.setName(cardName);
@@ -137,7 +133,7 @@ public class QuestionController {
 
     @GetMapping("/resetQuestionForm")
     public String resetQuestionForm() {
-        answerCount = 4; // Reset to the initial count
+        answerCount = 2; // Reset to the initial count
         return "redirect:/teacher/addCard";
     }
 
