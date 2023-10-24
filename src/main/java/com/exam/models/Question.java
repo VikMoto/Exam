@@ -21,6 +21,7 @@ public class Question {
     @Column(name="question_order")
     private Integer questionOrder;  // This represents the order of the question
 
+    private String imagePath;
 
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();

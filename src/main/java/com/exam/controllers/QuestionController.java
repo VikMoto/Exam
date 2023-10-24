@@ -10,7 +10,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/teacher")
@@ -47,10 +55,12 @@ public class QuestionController {
     }
 
     @PostMapping("/addQuestion")
-    public String handleQuestionSubmission(QuestionDTO questionDto, @RequestParam Map<String, String> params,
-                                           @SessionAttribute(name = "currentCard", required = false) Card currentCard) {
+    public String handleQuestionSubmission(QuestionDTO questionDto,
+                                           @RequestParam Map<String, String> params,
+                                           @RequestParam(name = "imageFile", required = false) MultipartFile imageFile,
+                                           @SessionAttribute(name = "currentCard", required = false) Card currentCard)
+                                           throws IOException {
         // Check if there's a current card in the session
-        System.out.println("currentCard = " + currentCard);
         if (currentCard == null) {
             // If not, create a new card
             currentCard = new Card();
@@ -59,6 +69,22 @@ public class QuestionController {
 
         Question question = new Question();
         question.setContent(questionDto.getContent());
+
+        try {
+            if (imageFile != null && !imageFile.isEmpty()) {
+                Path uploadDir = Paths.get("./uploads/images");
+                if (!Files.exists(uploadDir)) {
+                    Files.createDirectories(uploadDir);
+                }
+                Path imagePath = uploadDir.resolve(Objects.requireNonNull(imageFile.getOriginalFilename()));
+                Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
+                question.setImagePath("/images/" + imageFile.getOriginalFilename());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Here, you might also log the error or notify the user about the failure.
+        }
+
 
         // Extract and add answers based on prefixes
         for (int i = 1; params.containsKey("answer_" + i); i++) {
