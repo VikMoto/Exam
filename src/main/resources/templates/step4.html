@@ -17,6 +17,11 @@
             <h2 class="mb-0">Answer the Question</h2>
         </div>
         <div class="card-body">
+            <!-- Image Display if available -->
+            <div th:if="${imagePath}" class="mb-3">
+                <img th:src="@{${imagePath}}" alt="Question Image" class="img-fluid">
+            </div>
+
             <form th:action="@{/exam/submit}" method="post">
                 <!-- Hidden input for capturing user's ID -->
                 <input type="hidden" th:value="${user.id}" name="userId">
