@@ -72,13 +72,13 @@ public class QuestionController {
 
         try {
             if (imageFile != null && !imageFile.isEmpty()) {
-                Path uploadDir = Paths.get("./uploads/images");
+                Path uploadDir = Paths.get("/images");
                 if (!Files.exists(uploadDir)) {
                     Files.createDirectories(uploadDir);
                 }
                 Path imagePath = uploadDir.resolve(Objects.requireNonNull(imageFile.getOriginalFilename()));
                 Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
-                question.setImagePath("/uploads/images/" + imageFile.getOriginalFilename());
+                question.setImagePath("/images/" + imageFile.getOriginalFilename());
             }
         } catch (Exception e) {
             e.printStackTrace();

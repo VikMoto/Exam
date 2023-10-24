@@ -42,6 +42,8 @@ public class ExamController {
         model.addAttribute("question", firstQuestion);
         if (firstQuestion.getImagePath() != null) {
             model.addAttribute("imagePath", firstQuestion.getImagePath());
+            System.out.println("Image path: " + firstQuestion.getImagePath());
+
         }
         model.addAttribute("user", user);
 
@@ -91,6 +93,7 @@ public class ExamController {
         Question nextQuestion = examService.getNextQuestion();
         if (nextQuestion != null && nextQuestion.getImagePath() != null) {
             model.addAttribute("imagePath", nextQuestion.getImagePath());
+            System.out.println("nextQuestion.getImagePath() = " + nextQuestion.getImagePath());
         }
 
         if (nextQuestion == null) {

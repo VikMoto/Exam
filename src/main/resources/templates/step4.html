@@ -18,9 +18,12 @@
         </div>
         <div class="card-body">
             <!-- Image Display if available -->
-            <div th:if="${imagePath}" class="mb-3">
+            <div th:if="${imagePath != null}" class="mb-3">
                 <img th:src="@{${imagePath}}" alt="Question Image" class="img-fluid">
+                <img src="/uploads/images/photo_2023-10-23_20-10-14.jpg" alt="Image">
+
             </div>
+
 
             <form th:action="@{/exam/submit}" method="post">
                 <!-- Hidden input for capturing user's ID -->
