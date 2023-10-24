@@ -40,6 +40,9 @@ public class ExamController {
         Question firstQuestion = examService.getFirstQuestion();
 
         model.addAttribute("question", firstQuestion);
+        if (firstQuestion.getImagePath() != null) {
+            model.addAttribute("imagePath", firstQuestion.getImagePath());
+        }
         model.addAttribute("user", user);
 
         return "step4";
@@ -86,6 +89,9 @@ public class ExamController {
         }
 
         Question nextQuestion = examService.getNextQuestion();
+        if (nextQuestion != null && nextQuestion.getImagePath() != null) {
+            model.addAttribute("imagePath", nextQuestion.getImagePath());
+        }
 
         if (nextQuestion == null) {
             return "redirect:/exam/result/" + userId;

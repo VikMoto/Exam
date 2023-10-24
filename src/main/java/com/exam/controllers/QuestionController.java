@@ -78,7 +78,7 @@ public class QuestionController {
                 }
                 Path imagePath = uploadDir.resolve(Objects.requireNonNull(imageFile.getOriginalFilename()));
                 Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
-                question.setImagePath("/images/" + imageFile.getOriginalFilename());
+                question.setImagePath("/uploads/images/" + imageFile.getOriginalFilename());
             }
         } catch (Exception e) {
             e.printStackTrace();
