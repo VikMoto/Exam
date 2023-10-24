@@ -27,13 +27,5 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Answer> answers;
 
-    public void addAnswer(Answer answer) {
-        answers.add(answer);
-        answer.setUser(this);
-    }
-    public void removeAnswer(Answer answer) {
-        answers.remove(answer);
-        answer.setUser(null);
-    }
 
 }
