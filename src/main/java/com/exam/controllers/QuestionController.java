@@ -20,7 +20,7 @@ public class QuestionController {
     private final QuestionService questionService;
     private final CardService cardService;
 
-    private static int answerCount = 4;
+    private static int answerCount = 2;
 
     public QuestionController(QuestionService questionService, CardService cardService) {
         this.questionService = questionService;
