@@ -14,7 +14,8 @@
 <div class="container mt-5">
     <div class="card">
         <div class="card-header">
-            <h2 class="mb-0">Answer the Question</h2>
+            <!-- Display name of the card here -->
+            <h2 class="mb-0" th:text="${currentCard.name} ? 'Answer the Question for: ' + ${currentCard.name} : 'Answer the Question'"></h2>
         </div>
         <div class="card-body">
             <!-- Display image for the question if it exists -->
@@ -25,7 +26,6 @@
                 <input type="hidden" th:value="${user.id}" name="userId">
                 <!-- Hidden input for capturing current card's ID -->
                 <input type="hidden" th:value="${currentCard.id}" name="currentCardId">
-
 
                 <fieldset class="form-group">
                     <legend th:text="${question.content}"></legend>
@@ -47,11 +47,11 @@
     </div>
 </div>
 
-
 <!-- Optional: Include Bootstrap JS and Popper.js for dropdowns, modals, etc. -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 <!-- Custom JS to check for checkboxes before submission -->
 <script>
     document.querySelector('form').addEventListener('submit', function(e) {
@@ -63,6 +63,7 @@
         }
     });
 </script>
+
 </body>
 
 </html>
