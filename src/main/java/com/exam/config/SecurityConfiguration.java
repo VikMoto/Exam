@@ -29,7 +29,8 @@ public class SecurityConfiguration {
                             .requestMatchers(
                 "/exam/**",
                 "/uploads/**",
-                "/static/images/**"
+                "/static/images/**",
+                 "/app/uploads/**"
         )
           .permitAll()
         .anyRequest()

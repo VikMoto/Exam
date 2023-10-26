@@ -69,13 +69,14 @@ public class QuestionController {
 
         try {
             if (imageFile != null && !imageFile.isEmpty()) {
-                Path uploadDir = Paths.get("src/main/resources/static/images/");
+                // Change the directory path to the path mapped to the Docker volume
+                Path uploadDir = Paths.get("/app/uploads/");
                 if (!Files.exists(uploadDir)) {
                     Files.createDirectories(uploadDir);
                 }
                 Path imagePath = uploadDir.resolve(Objects.requireNonNull(imageFile.getOriginalFilename()));
                 Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
-                question.setImagePath("/static/images/" + imageFile.getOriginalFilename());
+                question.setImagePath("/uploads/" + imageFile.getOriginalFilename());
             }
         } catch (Exception e) {
             e.printStackTrace();
