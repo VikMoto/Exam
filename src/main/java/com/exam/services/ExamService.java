@@ -1,11 +1,15 @@
 package com.exam.services;
 
 import com.exam.models.Answer;
+import com.exam.models.Card;
 import com.exam.models.Question;
 import com.exam.models.User;
 import com.exam.repo.AnswerRepository;
+import com.exam.repo.CardRepository;
 import com.exam.repo.QuestionRepository;
 import com.exam.repo.UserRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,14 +22,17 @@ public class ExamService {
     private Long currentQuestionId = null;
     private final UserRepository userRepository;
 
+    private final CardRepository cardRepository;
+
 
     private final QuestionRepository questionRepository;
 
 
     private final AnswerRepository answerRepository;
 
-    public ExamService(UserRepository userRepository, QuestionRepository questionRepository, AnswerRepository answerRepository) {
+    public ExamService(UserRepository userRepository, CardRepository cardRepository, QuestionRepository questionRepository, AnswerRepository answerRepository) {
         this.userRepository = userRepository;
+        this.cardRepository = cardRepository;
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
     }
@@ -151,6 +158,46 @@ public class ExamService {
 
     public int getScoreByUserId(Long userId) {
         return userRepository.findById(userId).orElseThrow().getScore();
+    }
+
+    public Question getFirstQuestionFromCard(Card card) {
+        if (card == null || card.getId() == null) {
+            return null;
+        }
+
+        Pageable limit = PageRequest.of(0, 1); // Limit to 1 result
+        List<Question> questions = questionRepository.findQuestionsByCardId(card.getId(), limit);
+
+        if (questions.isEmpty()) {
+            return null; // No questions found for the card
+        }
+
+        return questions.get(0);
+    }
+
+    public Card getNextCard(Long currentCardId) {
+        Pageable limit = PageRequest.of(0, 1); // Limit to 1 result
+        List<Card> cards = cardRepository.findCardsAfterCurrent(currentCardId, limit);
+
+        if (cards.isEmpty()) {
+            return null; // No next card found
+        }
+
+        return cards.get(0);
+    }
+
+    public Card getCardById(Long currentCardId) {
+        return cardRepository.findById(currentCardId).orElseThrow();
+    }
+
+    public Card getFirstCard() {
+        List<Card> cards = cardRepository.findAllOrderedById();
+
+        if (cards.isEmpty()) {
+            return null; // No cards found in the database
+        }
+
+        return cards.get(0);  // Return the first card
     }
 }
 
