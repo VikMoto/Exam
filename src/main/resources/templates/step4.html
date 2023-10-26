@@ -23,6 +23,9 @@
             <form th:action="@{/exam/submit}" method="post">
                 <!-- Hidden input for capturing user's ID -->
                 <input type="hidden" th:value="${user.id}" name="userId">
+                <!-- Hidden input for capturing current card's ID -->
+                <input type="hidden" th:value="${currentCard.id}" name="currentCardId">
+
 
                 <fieldset class="form-group">
                     <legend th:text="${question.content}"></legend>

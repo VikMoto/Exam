@@ -1,5 +1,6 @@
 package com.exam.controllers;
 
+import com.exam.models.Card;
 import com.exam.models.Question;
 import com.exam.models.User;
 import com.exam.services.ExamService;
@@ -37,14 +38,16 @@ public class ExamController {
     @GetMapping("/start")
     public String startExam(Model model) {
         User user = examService.getLatestRegisteredUser();
-        Question firstQuestion = examService.getFirstQuestion();
+        Card firstCard = examService.getFirstCard(); // New method
+        Question firstQuestion = examService.getFirstQuestionFromCard(firstCard); // New method
 
+        model.addAttribute("currentCard", firstCard);
         model.addAttribute("question", firstQuestion);
         model.addAttribute("user", user);
 
+
         // Check if the first question has an associated imagePath and add to model
         if (firstQuestion != null && firstQuestion.getImagePath() != null) {
-            System.out.println("firstQuestion.getImagePath() = " + firstQuestion.getImagePath());
             model.addAttribute("imagePath", firstQuestion.getImagePath());
         }
 
@@ -54,6 +57,7 @@ public class ExamController {
 
     @PostMapping("/submit")
     public String submitAnswer(@RequestParam(name = "userId") Long userId,
+                               @RequestParam(name = "currentCardId") Long currentCardId,
                                @RequestParam MultiValueMap<String, String> allRequestParams,
                                Model model) {
 
@@ -95,21 +99,26 @@ public class ExamController {
         Question nextQuestion = examService.getNextQuestion();
 
 
-        if (nextQuestion != null && nextQuestion.getImagePath() != null) {
-            model.addAttribute("imagePath", nextQuestion.getImagePath());
-            System.out.println("nextQuestion.getImagePath() = " + nextQuestion.getImagePath());
-        }
-
-
+        // If there's no next question within the same card, find the next card.
         if (nextQuestion == null) {
-            return "redirect:/exam/result/" + userId;
-            // Or wherever you want to redirect when the exam is finished
+            Card nextCard = examService.getNextCard(currentCardId);
+
+            if (nextCard == null) {
+                return "redirect:/exam/result/" + userId;
+            }
+
+            model.addAttribute("currentCard", nextCard);
+            nextQuestion = examService.getFirstQuestionFromCard(nextCard);
+        } else {
+            model.addAttribute("currentCard", examService.getCardById(currentCardId));
         }
-
-
 
         model.addAttribute("question", nextQuestion);
-        model.addAttribute("user", userById); // Assumes you have a method to get a user by ID
+        model.addAttribute("user", examService.getUserById(userId));
+
+        if (nextQuestion != null && nextQuestion.getImagePath() != null) {
+            model.addAttribute("imagePath", nextQuestion.getImagePath());
+        }
 
         return "step4";
     }
