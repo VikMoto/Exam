@@ -1,10 +1,15 @@
 package com.exam.services;
 
 import com.exam.models.Card;
+import com.exam.models.Question;
 import com.exam.repo.CardRepository;
 import com.exam.repo.QuestionRepository;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +46,19 @@ public class CardService {
 
     public void deleteCard(Long cardId) {
         Card card = cardRepository.findById(cardId).orElseThrow();
+
+        // Check if the card has associated questions with image paths and delete those images
+        for (Question q : card.getQuestions()) {
+            if (q.getImagePath() != null) {
+                try {
+                    Path imagePath = Paths.get("/app" + q.getImagePath()); // Assuming your image paths are like "/uploads/filename.jpg"
+                    Files.deleteIfExists(imagePath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    // Optionally log or notify about the failure to delete the image
+                }
+            }
+        }
         questionRepository.deleteAll(card.getQuestions());
         cardRepository.deleteById(cardId);
     }
