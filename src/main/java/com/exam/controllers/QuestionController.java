@@ -4,6 +4,7 @@ import com.exam.dto.QuestionDTO;
 import com.exam.models.Answer;
 import com.exam.models.Card;
 import com.exam.models.Question;
+import com.exam.services.AnswerService;
 import com.exam.services.CardService;
 import com.exam.services.QuestionService;
 import org.springframework.stereotype.Controller;
@@ -25,17 +26,24 @@ public class QuestionController {
 
     private final QuestionService questionService;
     private final CardService cardService;
+    private final AnswerService answerService;
 
     private static int answerCount = 2;
 
-    public QuestionController(QuestionService questionService, CardService cardService) {
+    public QuestionController(QuestionService questionService, CardService cardService, AnswerService answerService) {
         this.questionService = questionService;
         this.cardService = cardService;
+        this.answerService = answerService;
     }
 
+    @GetMapping("/manage-cards")
+    public String showManageCards(Model model) {
+        Iterable<Card> cards = cardService.getAllCards();  // Assuming you have this method in your CardService
+        model.addAttribute("cards", cards);
+        return "manage-cards";  // Name of the Thymeleaf template you provided
+    }
 
-
-    @GetMapping("/addQuestion")
+    @GetMapping("/add-question")
     public String showAddQuestionForm(@RequestParam(name = "cardId", required = false) Long cardId, Model model) {
         if (cardId != null) {
             // Fetch the card using the provided ID
@@ -43,16 +51,40 @@ public class QuestionController {
             model.addAttribute("currentCard", currentCard);
         }
         model.addAttribute("answerCount", answerCount);
-        return "addQuestion";  // Name of the Thymeleaf template
+        return "add-question";  // Name of the Thymeleaf template
     }
+
+
+    @GetMapping("/add-question/{cardId}")
+    public String showAddQuestionFormWithPath(@PathVariable Long cardId, Model model) {
+        // Fetch the card using the provided ID from the path variable
+        Card currentCard = cardService.getCardById(cardId).orElseThrow();
+        model.addAttribute("currentCard", currentCard);
+        model.addAttribute("answerCount", answerCount);
+        return "add-question";  // Name of the Thymeleaf template
+    }
+
+    @PostMapping("/add-question/{cardId}")
+    public String handleQuestionSubmissionForCard(@PathVariable Long cardId,
+                                                  QuestionDTO questionDto,
+                                                  @RequestParam Map<String, String> params,
+                                                  @RequestParam(name = "imageFile", required = false) MultipartFile imageFile) {
+        Card currentCard = cardService.getCardById(cardId).orElseThrow();
+
+        // ... (rest of the logic remains same as your existing handleQuestionSubmission method)
+
+        return "redirect:/teacher/add-question/" + cardId;  // Redirect back to the add-question for the same card
+    }
+
+
 
     @GetMapping("/addAnswerField")
     public String addAnswerField() {
         answerCount++;
-        return "redirect:/teacher/addQuestion";
+        return "redirect:/teacher/add-question";
     }
 
-    @PostMapping("/addQuestion")
+    @PostMapping("/add-question")
     public String handleQuestionSubmission(QuestionDTO questionDto,
                                            @RequestParam Map<String, String> params,
                                            @RequestParam(name = "imageFile", required = false) MultipartFile imageFile,
@@ -106,17 +138,19 @@ public class QuestionController {
         question.setCard(currentCard);
         questionService.saveQuestion(question);
 
-        return "redirect:/teacher/addQuestion";
+        answerCount = 2; // Reset to the initial count
+
+        return "redirect:/teacher/add-question";
     }
 
-    @GetMapping("/addCard")
+    @GetMapping("/add-card")
     public String showAddCardForm(Model model) {
         model.addAttribute("questionCount", answerCount); // Add questionCount to the model
-        return "addCard";  // Name of the Thymeleaf template for adding a card
+        return "add-card";  // Name of the Thymeleaf template for adding a card
     }
 
 
-    @PostMapping("/addCard")
+    @PostMapping("/add-card")
     public String handleCardSubmission(@RequestParam("cardName") String cardName) {
         // Create a new card and save it to the database
         Card card = new Card();
@@ -129,19 +163,115 @@ public class QuestionController {
 
 
         // Redirect to the question adding page with the card's ID as a parameter
-        return "redirect:/teacher/addQuestion?cardId=" + cardId;
+        return "redirect:/teacher/add-question?cardId=" + cardId;
     }
+
+
+    @GetMapping("/update-card/{cardId}")
+    public String showUpdateCardForm(@PathVariable Long cardId, Model model) {
+        Card card = cardService.getCardById(cardId).orElseThrow();
+
+        model.addAttribute("card", card);
+        return "update-card";
+    }
+
+    @PostMapping("/update-card/{cardId}")
+    public String handleCardUpdate(@PathVariable Long cardId, @ModelAttribute Card card) {
+
+        System.out.println("card = " + card);
+        if (!cardService.existsById(cardId)) {
+            throw new RuntimeException("Card not found!");  // or handle this in a more graceful manner
+        }
+
+        card.setId(cardId);  // ensure the card has the right ID to update the correct record
+        cardService.saveCard(card);  // save the updated card
+
+        return "redirect:/teacher/manage-cards";  // redirect to the manage cards page after updating
+    }
+
+
+    @GetMapping("/delete-card/{cardId}")
+    public String deleteCard(@PathVariable Long cardId) {
+        cardService.deleteCard(cardId);
+        return "redirect:/teacher/manage-cards";
+    }
+
+
+    @GetMapping("/update-question/{questionId}")
+    public String showUpdateQuestionForm(@PathVariable Long questionId, Model model) {
+        Question question = (Question) questionService.getQuestionById(questionId).orElseThrow();
+        model.addAttribute("question", question);
+        return "update-question";
+    }
+
+    @PostMapping("/updateQuestion")
+    public String handleQuestionUpdate(@ModelAttribute Question question) {
+        questionService.saveQuestion(question);
+        return "redirect:/teacher/add-question";
+    }
+
+    @GetMapping("/deleteQuestion/{questionId}")
+    public String deleteQuestion(@PathVariable Long questionId) {
+        questionService.deleteQuestion(questionId);
+        return "redirect:/teacher/manage-cards";
+    }
+
+
+    @GetMapping("/add-answer/{questionId}")
+    public String showAddAnswerForm(@PathVariable Long questionId, Model model) {
+        Question question = (Question) questionService.getQuestionById(questionId).orElseThrow();
+        model.addAttribute("question", question);
+        return "add-answer";  // Name of the Thymeleaf template for adding an answer
+    }
+
+    @PostMapping("/add-answer")
+    public String handleAnswerSubmission(@ModelAttribute Answer answer,
+                                         @SessionAttribute(name = "question", required = false) Question question) {
+        if (question == null) {
+            return "redirect:/teacher/manage-cards";
+        }
+
+        answer.setQuestion(question);
+        answerService.saveAnswer(answer);
+        return "redirect:/teacher/manage-cards";
+    }
+
+    @GetMapping("/update-answer/{answerId}")
+    public String showUpdateAnswerForm(@PathVariable Long answerId, Model model) {
+        Answer answer = (Answer) answerService.getAnswerById(answerId).orElseThrow();
+        model.addAttribute("answer", answer);
+        return "update-answer";
+    }
+
+
+    @PostMapping("/update-answer")
+    public String handleAnswerUpdate(@ModelAttribute Answer answer) {
+        answerService.saveAnswer(answer);
+        return "redirect:/teacher/add-question";  // Or redirect to a suitable view
+    }
+
+    @GetMapping("/delete-answer/{answerId}")
+    public String deleteAnswer(@PathVariable Long answerId) {
+        answerService.deleteAnswer(answerId);
+        return "redirect:/teacher/manage-cards";
+    }
+
+
+
+
+
+
 
     @GetMapping("/resetQuestionForm")
     public String resetQuestionForm() {
         answerCount = 2; // Reset to the initial count
-        return "redirect:/teacher/addCard";
+        return "redirect:/teacher/manage-cards";
     }
 
     @GetMapping("/endQuestionForm")
     public String endQuestionForm(SessionStatus sessionStatus) {
         // Complete the session for the current card
         sessionStatus.setComplete();
-        return "redirect:/teacher/addCard";
+        return "redirect:/teacher/manage-cards";
     }
 }
