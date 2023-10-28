@@ -23,7 +23,7 @@ public class Question {
 
     private String imagePath;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Answer> answers = new ArrayList<>();
 
     @ManyToOne

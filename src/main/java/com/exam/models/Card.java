@@ -20,7 +20,7 @@ public class Card {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "card")
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
     private List<Question> questions = new ArrayList<>();
 
     public void addQuestion(Question question) {

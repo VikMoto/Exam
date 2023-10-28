@@ -7,6 +7,8 @@ import com.exam.repo.AnswerRepository;
 import com.exam.repo.QuestionRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class QuestionService {
     private final QuestionRepository questionRepository;
@@ -27,6 +29,14 @@ public class QuestionService {
             answerRepository.save(answer); // Persist each answer to the database
         }
         System.out.println("Saving question: " + question.getContent());
+    }
+
+    public void deleteQuestion(Long questionId) {
+        questionRepository.deleteById(questionId);
+    }
+
+    public Optional<Object> getQuestionById(Long questionId) {
+        return Optional.of(questionRepository.findById(questionId));
     }
 }
 
