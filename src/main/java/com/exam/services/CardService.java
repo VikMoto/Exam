@@ -4,6 +4,8 @@ import com.exam.models.Card;
 import com.exam.models.Question;
 import com.exam.repo.CardRepository;
 import com.exam.repo.QuestionRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -63,8 +65,34 @@ public class CardService {
         cardRepository.deleteById(cardId);
     }
 
+    public Card getNextCard(Long currentCardId) {
+        Pageable limit = PageRequest.of(0, 1); // Limit to 1 result
+        List<Card> cards = cardRepository.findCardsAfterCurrent(currentCardId, limit);
+
+        if (cards.isEmpty()) {
+            return null; // No next card found
+        }
+
+        return cards.get(0);
+    }
+
+    public Card getPreviousCard(Long currentCardId) {
+        Pageable limit = PageRequest.of(0, 1); // Limit to 1 result
+        List<Card> cards = cardRepository.findCardsBeforeCurrent(currentCardId, limit);
+
+        if (cards.isEmpty()) {
+            return null; // No previous card found
+        }
+
+        return cards.get(0);
+    }
+
 
     public boolean existsById(Long cardId) {
         return cardRepository.existsById(cardId);
+    }
+
+    public Optional<Card> getCurrentCard(Long currentCardId) {
+        return cardRepository.findById(currentCardId);
     }
 }

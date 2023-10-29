@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -93,27 +94,52 @@ public class ExamService {
         return questionRepository.findFirstByOrderByQuestionOrderAsc();
     }
 
-    public Question getNextQuestion(Long currentQuestionId) {
-        Question currentQuestion = questionRepository.findById(currentQuestionId).orElse(null);
-        if (currentQuestion != null) {
-            return questionRepository.findByQuestionOrderGreaterThanOrderByQuestionOrderAsc(currentQuestion.getQuestionOrder()).stream()
-                            .findFirst()
-                            .orElse(null);
-        }
-        return null;
-    }
+    public Question getNextQuestion(Long userId, Long currentCardId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));  // Assuming you have this method to fetch the user by ID
+        Long currentQuestionId = user.getCurrentQuestionId();
 
-    public Question getNextQuestion() {
         if (currentQuestionId == null) {
             return questionRepository.findFirstByOrderByQuestionOrderAsc();
         } else {
             Question currentQuestion = questionRepository.findById(currentQuestionId).orElse(null);
             if (currentQuestion != null) {
-                return questionRepository.findFirstByQuestionOrderGreaterThanOrderByQuestionOrderAsc(currentQuestion.getQuestionOrder());
+                return getNextQuestionFromSameCard(currentCardId, currentQuestion.getQuestionOrder());
             }
         }
         return null;
     }
+
+    public Question getNextQuestionFromSameCard(Long cardId, Integer currentQuestionOrder) {
+        return questionRepository.findFirstByCardIdAndQuestionOrderGreaterThanOrderByQuestionOrderAsc(cardId, currentQuestionOrder).orElse(null);
+    }
+
+
+    public Question getPreviousQuestion(Long userId, Long currentCardId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));  // Assuming you have this method to fetch the user by ID
+        Long currentQuestionId = user.getCurrentQuestionId();
+
+        if (currentQuestionId == null) {
+            return questionRepository.findTopByOrderByQuestionOrderDesc().orElse(null); // Assuming you might want the last question if no current one is set
+        } else {
+            Question currentQuestion = questionRepository.findById(currentQuestionId).orElse(null);
+            if (currentQuestion != null) {
+                return getPreviousQuestionFromSameCard(currentCardId, currentQuestion.getQuestionOrder());
+            }
+        }
+        return null;
+    }
+
+
+
+    public Question getPreviousQuestionFromSameCard(Long cardId, Integer currentQuestionOrder) {
+        return questionRepository.findFirstByCardIdAndQuestionOrderLessThanOrderByQuestionOrderDesc(cardId, currentQuestionOrder).orElse(null);
+    }
+
+
+
+
+
+
 
     public void setCurrentQuestionId(Long id) {
         this.currentQuestionId = id;
@@ -175,16 +201,8 @@ public class ExamService {
         return questions.get(0);
     }
 
-    public Card getNextCard(Long currentCardId) {
-        Pageable limit = PageRequest.of(0, 1); // Limit to 1 result
-        List<Card> cards = cardRepository.findCardsAfterCurrent(currentCardId, limit);
 
-        if (cards.isEmpty()) {
-            return null; // No next card found
-        }
 
-        return cards.get(0);
-    }
 
     public Card getCardById(Long currentCardId) {
         return cardRepository.findById(currentCardId).orElseThrow();
@@ -198,6 +216,14 @@ public class ExamService {
         }
 
         return cards.get(0);  // Return the first card
+    }
+
+    public void updateUser(User currentUser) {
+        userRepository.save(currentUser);
+    }
+
+    public Question getLastQuestionFromCard(Card card) {
+        return questionRepository.findTopByCardIdOrderByQuestionOrderDesc(card.getId()).orElse(null);
     }
 }
 

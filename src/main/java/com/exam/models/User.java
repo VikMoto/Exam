@@ -21,6 +21,7 @@ public class User {
     private String firstName;
     private String lastName;
 
+    private Long currentQuestionId;
 
     private Integer score = 0;
 
