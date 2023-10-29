@@ -12,6 +12,10 @@ public interface CardRepository extends JpaRepository<Card, Long> {
     @Query("SELECT c FROM Card c WHERE c.id > :currentCardId ORDER BY c.id ASC")
     List<Card> findCardsAfterCurrent(@Param("currentCardId") Long currentCardId, Pageable pageable);
 
+    @Query("SELECT c FROM Card c WHERE c.id < :currentCardId ORDER BY c.id DESC")
+    List<Card> findCardsBeforeCurrent(@Param("currentCardId") Long currentCardId, Pageable limit);
+
+
     @Query("SELECT c FROM Card c ORDER BY c.id ASC")
     List<Card> findAllOrderedById();
 }

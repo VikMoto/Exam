@@ -80,15 +80,11 @@
 <!-- Additional script to handle back and next actions -->
 <script>
     document.getElementById('back-btn').addEventListener('click', function() {
-        let userId = document.querySelector('input[name="userId"]').value;
-        let currentCardId = document.querySelector('input[name="currentCardId"]').value;
-        window.location.href = `/exam/back?userId=${userId}&currentCardId=${currentCardId}`; // Assuming a back endpoint is created
+        window.location.href = '/exam/back'; // Assuming a back endpoint is created
     });
 
     document.getElementById('next-btn').addEventListener('click', function() {
-        let userId = document.querySelector('input[name="userId"]').value;
-        let currentCardId = document.querySelector('input[name="currentCardId"]').value;
-        window.location.href = `/exam/next?userId=${userId}&currentCardId=${currentCardId}`; // Assuming a next endpoint is created
+        window.location.href = '/exam/next'; // Assuming a next endpoint is created
     });
 </script>
 </body>

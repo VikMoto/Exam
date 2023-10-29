@@ -175,16 +175,8 @@ public class ExamService {
         return questions.get(0);
     }
 
-    public Card getNextCard(Long currentCardId) {
-        Pageable limit = PageRequest.of(0, 1); // Limit to 1 result
-        List<Card> cards = cardRepository.findCardsAfterCurrent(currentCardId, limit);
 
-        if (cards.isEmpty()) {
-            return null; // No next card found
-        }
 
-        return cards.get(0);
-    }
 
     public Card getCardById(Long currentCardId) {
         return cardRepository.findById(currentCardId).orElseThrow();
