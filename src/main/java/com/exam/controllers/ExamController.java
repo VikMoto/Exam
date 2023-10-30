@@ -49,8 +49,7 @@ public class ExamController {
 
         // Set the currentQuestionId for the user
         if (firstQuestion != null) {
-            user.setCurrentQuestionId(firstQuestion.getId());
-            examService.updateUser(user); // You need to have an updateUser method to persist this change to the database
+            updateCurrentQuestionId(user, firstQuestion.getId());
         }
 
         model.addAttribute("currentCard", firstCard);
@@ -79,17 +78,19 @@ public class ExamController {
 
         if (previousQuestion != null) {
             System.out.println("previousQuestion.getId() = " + previousQuestion.getId());
-            currentUser.setCurrentQuestionId(previousQuestion.getId());
-            examService.updateUser(currentUser);
+
+            updateCurrentQuestionId(currentUser, previousQuestion.getId());
+
             model.addAttribute("currentCard", currentCard);  // Add the current card to the model
         } else {
             Card previousCard = cardService.getPreviousCard(currentCardId);
             if (previousCard == null) {
                 return "redirect:/exam/start";
             }
-            previousQuestion = examService.getLastQuestionFromCard(previousCard);  // Assuming you have a method to get the last question from a card
-            currentUser.setCurrentQuestionId(previousQuestion.getId());  // Set the user's current question to the last question of the previous card.
-            examService.updateUser(currentUser);
+            previousQuestion = examService.getLastQuestionFromCard(previousCard);
+            // Assuming you have a method to get the last question from a card
+            updateCurrentQuestionId(currentUser, previousQuestion.getId());
+
             model.addAttribute("currentCard", previousCard);  // Add the previous card to the model
         }
 
@@ -117,8 +118,7 @@ public class ExamController {
 
         if (nextQuestion != null) {
             System.out.println("nextQuestion.getId() = " + nextQuestion.getId());
-            currentUser.setCurrentQuestionId(nextQuestion.getId());
-            examService.updateUser(currentUser);
+            updateCurrentQuestionId(currentUser, nextQuestion.getId());
             model.addAttribute("currentCard", currentCard);  // Add the current card to the model
 
         } else {
@@ -128,8 +128,9 @@ public class ExamController {
                 return "redirect:/exam/result/" + userId;
             }
             nextQuestion = examService.getFirstQuestionFromCard(nextCard);
-            currentUser.setCurrentQuestionId(nextQuestion.getId());  // Set the user's current question to the first question of the new card.
-            examService.updateUser(currentUser);
+
+            updateCurrentQuestionId(currentUser, nextQuestion.getId());
+
             model.addAttribute("currentCard", nextCard);  // Add the next card to the model
         }
 
@@ -177,7 +178,10 @@ public class ExamController {
             // Take the first key to get the current question ID
             String[] parts = answerKeys.get(0).split("_");
             Long currentQuestionId = Long.parseLong(parts[1]);
-            examService.setCurrentQuestionId(currentQuestionId);
+
+//            examService.setCurrentQuestionId(currentQuestionId);
+
+            updateCurrentQuestionId(currentUser, currentQuestionId);
 
             int correctAnswersCount = 0; // To keep track of correct answers for a given question
             // Iterate over all submitted answers for the question
@@ -214,8 +218,18 @@ public class ExamController {
 
             model.addAttribute("currentCard", nextCard);
             nextQuestion = examService.getFirstQuestionFromCard(nextCard);
+
+            if (nextQuestion == null) {
+                return "redirect:/exam/result/" + userId;
+            } else {
+                updateCurrentQuestionId(currentUser, nextQuestion.getId());
+            }
+
+
         } else {
             model.addAttribute("currentCard", examService.getCardById(currentCardId));
+
+            updateCurrentQuestionId(currentUser, nextQuestion.getId());
         }
 
         model.addAttribute("question", nextQuestion);
@@ -228,7 +242,10 @@ public class ExamController {
         return "step4";
     }
 
-
+    private void updateCurrentQuestionId(User currentUser, Long nextQuestion) {
+        currentUser.setCurrentQuestionId(nextQuestion);  // Setting the user's current question ID
+        examService.updateUser(currentUser); // Updating the user
+    }
 
 
     @GetMapping("/result/{userId}")
