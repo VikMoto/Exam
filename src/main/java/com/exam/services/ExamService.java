@@ -1,15 +1,10 @@
 package com.exam.services;
 
-import com.exam.models.Answer;
-import com.exam.models.Card;
-import com.exam.models.Question;
-import com.exam.models.User;
-import com.exam.repo.AnswerRepository;
-import com.exam.repo.CardRepository;
-import com.exam.repo.QuestionRepository;
-import com.exam.repo.UserRepository;
+import com.exam.models.*;
+import com.exam.repo.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,22 +15,20 @@ import java.util.Optional;
 @Service
 public class ExamService {
 
-    private Long currentQuestionId = null;
     private final UserRepository userRepository;
-
     private final CardRepository cardRepository;
-
-
     private final QuestionRepository questionRepository;
-
-
+    private final AnsweredQuestionRepository answeredQuestionRepo;
     private final AnswerRepository answerRepository;
+    private final CardService cardService;
 
-    public ExamService(UserRepository userRepository, CardRepository cardRepository, QuestionRepository questionRepository, AnswerRepository answerRepository) {
+    public ExamService(UserRepository userRepository, CardRepository cardRepository, QuestionRepository questionRepository, AnsweredQuestionRepository answeredQuestionRepo, AnswerRepository answerRepository, CardService cardService) {
         this.userRepository = userRepository;
         this.cardRepository = cardRepository;
         this.questionRepository = questionRepository;
+        this.answeredQuestionRepo = answeredQuestionRepo;
         this.answerRepository = answerRepository;
+        this.cardService = cardService;
     }
 
     public void saveUser(User user) {
@@ -115,19 +108,35 @@ public class ExamService {
 
 
     public Question getPreviousQuestion(Long userId, Long currentCardId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));  // Assuming you have this method to fetch the user by ID
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));
         Long currentQuestionId = user.getCurrentQuestionId();
 
         if (currentQuestionId == null) {
-            return questionRepository.findTopByOrderByQuestionOrderDesc().orElse(null); // Assuming you might want the last question if no current one is set
+            return questionRepository.findTopByOrderByQuestionOrderDesc().orElse(null);
         } else {
             Question currentQuestion = questionRepository.findById(currentQuestionId).orElse(null);
             if (currentQuestion != null) {
-                return getPreviousQuestionFromSameCard(currentCardId, currentQuestion.getQuestionOrder());
+                Question prevQuestion = getPreviousQuestionFromSameCard(currentCardId, currentQuestion.getQuestionOrder());
+
+                // If there's no previous question on the same card, try to get the last question from the previous card
+                if(prevQuestion == null) {
+                    Card prevCard = cardService.getPreviousCard(currentCardId); // Assuming you have this method
+                    if(prevCard != null) {
+                        prevQuestion = getLastQuestionFromCard(prevCard);
+                    }
+                }
+                return prevQuestion;
             }
         }
         return null;
     }
+
+
+    public List<Question> getAllByCardIdOrderByQuestionOrder(Long currentCardId) {
+        return questionRepository.findAllByCardIdOrderByQuestionOrder(currentCardId);
+    }
+
+
 
 
 
@@ -141,15 +150,11 @@ public class ExamService {
 
 
 
-    public void setCurrentQuestionId(Long id) {
-        this.currentQuestionId = id;
-    }
 
     public boolean isAnswerCorrect(Long questionId, String submittedAnswer) {
         // Fetch all the correct answers for the given question from the database
         List<Answer> correctAnswers = answerRepository.findByQuestionIdAndIsCorrectTrue(questionId);
-//        System.out.println("correctAnswers = " + correctAnswers);
-//        System.out.println("submittedAnswer = " + submittedAnswer);
+
         // Check if the submittedAnswer matches any of the correct answers for the given question
         for (Answer correctAnswer : correctAnswers) {
             if (correctAnswer.getId()== Long.parseLong(submittedAnswer)) {
@@ -224,6 +229,18 @@ public class ExamService {
 
     public Question getLastQuestionFromCard(Card card) {
         return questionRepository.findTopByCardIdOrderByQuestionOrderDesc(card.getId()).orElse(null);
+    }
+
+
+    public void addUserAnsweredQuestion(User user, Long questionId) {
+        AnsweredQuestion answeredQuestion = new AnsweredQuestion();
+        answeredQuestion.setUser(user);
+        answeredQuestion.setQuestionId(questionId);
+        answeredQuestionRepo.save(answeredQuestion);
+    }
+
+    public Question getQuestionById(Long currentQuestionId) {
+        return questionRepository.findById(currentQuestionId).orElseThrow();
     }
 }
 
