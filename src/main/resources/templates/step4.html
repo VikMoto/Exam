@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
 
 <head>
     <meta charset="UTF-8">
@@ -23,9 +23,13 @@
     <div class="card">
         <div class="card-header">
             <!-- Display name of the card here -->
-            <h2 class="mb-0" th:text="${currentCard.name} ? 'Answer the Question for: ' + ${currentCard.name} : 'Answer the Question'"></h2>
+            <h2 class="mb-0" th:text="${currentCard.name} ? 'Відповіді на питання: ' + ${currentCard.name} : 'Answer the Question'"></h2>
         </div>
         <div class="card-body">
+            <!-- Fallback for question content -->
+            <div th:text="${question != null ? question.content : 'Default content'}"></div>
+
+
             <!-- Display image for the question if it exists with constrained size -->
             <img th:if="${imagePath}" th:src="@{${imagePath}}" alt="Question Image" class="img-fluid mb-3 constrained-image">
 
