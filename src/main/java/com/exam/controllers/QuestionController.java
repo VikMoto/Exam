@@ -199,7 +199,7 @@ public class QuestionController {
 
     @GetMapping("/update-question/{questionId}")
     public String showUpdateQuestionForm(@PathVariable Long questionId, Model model) {
-        Question question = (Question) questionService.getQuestionById(questionId).orElseThrow();
+        Question question = (Question) questionService.getQuestionById(questionId);
         model.addAttribute("question", question);
         return "update-question";
     }
@@ -219,7 +219,7 @@ public class QuestionController {
 
     @GetMapping("/add-answer/{questionId}")
     public String showAddAnswerForm(@PathVariable Long questionId, Model model) {
-        Question question = (Question) questionService.getQuestionById(questionId).orElseThrow();
+        Question question = (Question) questionService.getQuestionById(questionId);
         model.addAttribute("question", question);
         return "add-answer";  // Name of the Thymeleaf template for adding an answer
     }

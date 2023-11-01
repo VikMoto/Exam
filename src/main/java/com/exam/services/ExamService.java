@@ -1,9 +1,6 @@
 package com.exam.services;
 
-import com.exam.models.Answer;
-import com.exam.models.Card;
-import com.exam.models.Question;
-import com.exam.models.User;
+import com.exam.models.*;
 import com.exam.repo.AnswerRepository;
 import com.exam.repo.CardRepository;
 import com.exam.repo.QuestionRepository;
@@ -12,15 +9,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class ExamService {
 
-    private Long currentQuestionId = null;
     private final UserRepository userRepository;
 
     private final CardRepository cardRepository;
@@ -30,12 +29,14 @@ public class ExamService {
 
 
     private final AnswerRepository answerRepository;
+    private final CardService cardService;
 
-    public ExamService(UserRepository userRepository, CardRepository cardRepository, QuestionRepository questionRepository, AnswerRepository answerRepository) {
+    public ExamService(UserRepository userRepository, CardRepository cardRepository, QuestionRepository questionRepository, AnswerRepository answerRepository, CardService cardService) {
         this.userRepository = userRepository;
         this.cardRepository = cardRepository;
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
+        this.cardService = cardService;
     }
 
     public void saveUser(User user) {
@@ -61,6 +62,10 @@ public class ExamService {
         user.getAnswers().add(answer);  // Assuming you have a getAnswers() method in the User entity that returns a List<Answer>.
         userRepository.save(user);
     }
+
+
+
+
 
     public int calculateScoreForUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
@@ -90,60 +95,198 @@ public class ExamService {
         return userRepository.findTopByOrderByIdDesc().orElse(null);
     }
 
-    public Question getFirstQuestion() {
-        return questionRepository.findFirstByOrderByQuestionOrderAsc();
+
+
+    public void submitAnswer(Long userId, Long questionId, List<Answer> submittedAnswers) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new RuntimeException("Question not found"));
+
+        // Move from unanswered questions to viewed history
+        user.getUnansweredQuestions().remove(question);
+        user.getViewedQuestionsHistory().add(
+                UserQuestionHistory.builder().user(user).question(question).viewedAt(LocalDateTime.now()).build()
+        );
+
+        userRepository.save(user);
     }
 
-    public Question getNextQuestion(Long userId, Long currentCardId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));  // Assuming you have this method to fetch the user by ID
-        Long currentQuestionId = user.getCurrentQuestionId();
+    public void initializeUnansweredQuestionsForUser(User user) {
+        List<Card> allCards = cardRepository.findAllByOrderByIdAsc();
+        List<Question> orderedQuestions = new ArrayList<>();
 
-        if (currentQuestionId == null) {
-            return questionRepository.findFirstByOrderByQuestionOrderAsc();
-        } else {
-            Question currentQuestion = questionRepository.findById(currentQuestionId).orElse(null);
-            if (currentQuestion != null) {
-                return getNextQuestionFromSameCard(currentCardId, currentQuestion.getQuestionOrder());
-            }
+        for (Card card : allCards) {
+            orderedQuestions.addAll(questionRepository.findByCardIdOrderByQuestionOrderAsc(card.getId()));
         }
+
+        user.getUnansweredQuestions().addAll(orderedQuestions);
+        Question firstQuestion = user.getUnansweredQuestions().isEmpty() ? null : user.getUnansweredQuestions().get(0);
+        assert firstQuestion != null;
+        user.setCurrentQuestionId(firstQuestion.getId());
+        userRepository.save(user);
+    }
+
+
+//    public Question getNextUnansweredQuestion(User user, Question currentQuestion) {
+//        List<Question> unansweredQuestions = user.getUnansweredQuestions();
+//        Long currentQuestionId = currentQuestion.getId();
+//
+//        System.out.println("currentQuestionId = in getNextUnansweredQuestion " + currentQuestionId);
+//
+//        // If the currentQuestionId is not in the list of unanswered questions,
+//        // assume the next question in the list should be returned.
+//        if (!unansweredQuestions.stream().anyMatch(q -> q.getId().equals(currentQuestionId))) {
+//            if (!unansweredQuestions.isEmpty()) {
+//                // Just get the first unanswered question
+//                return unansweredQuestions.get(0);
+//            }
+//            // If there are no unanswered questions left, return null
+//            return null;
+//        }
+//
+//        // If the currentQuestionId is found in the list,
+//        // proceed to get the next question after it
+//        int currentIndex = -1;
+//        for (int i = 0; i < unansweredQuestions.size(); i++) {
+//            if (unansweredQuestions.get(i).getId().equals(currentQuestionId)) {
+//                currentIndex = i;
+//                break;
+//            }
+//        }
+//
+//        System.out.println("currentIndex = " + currentIndex);
+//
+//        // Get the next question if it exists
+//        if (currentIndex != -1 && currentIndex < unansweredQuestions.size() - 1) {
+//            return unansweredQuestions.get(currentIndex + 1);
+//        }
+//
+//        // If there are no more unanswered questions, return null
+//        return null;
+//    }
+
+    public Question getNextUnansweredQuestion(User user, Question currentQuestion) {
+        List<Question> unansweredQuestions = user.getUnansweredQuestions();
+        Long currentQuestionId = currentQuestion.getId();
+
+        // Maintain a separate mapping of question IDs to their original indices.
+        Map<Long, Integer> questionIndexMap = IntStream.range(0, unansweredQuestions.size())
+                .boxed()
+                .collect(Collectors.toMap(i -> unansweredQuestions.get(i).getId(), i -> i));
+        System.out.println("questionIndexMap = " + questionIndexMap);
+
+        // Find the index of the current question based on the map.
+        Integer currentQuestionIndex = questionIndexMap.get(currentQuestionId);
+
+        // If the current question is no longer in the list, find the next index where it used to be.
+        if (currentQuestionIndex == null) {
+            // Find where the current question would fit in the list of remaining question IDs.
+            List<Long> sortedQuestionIds = unansweredQuestions.stream()
+                    .map(Question::getId)
+                    .sorted()
+                    .toList();
+
+            int insertPoint = Collections.binarySearch(sortedQuestionIds, currentQuestionId);
+            if (insertPoint < 0) {
+                // Convert insertPoint to the index where the current ID would be inserted.
+                insertPoint = -insertPoint - 1;
+            }
+
+            // If the insert point is within the range of the list, return the question at this position.
+            if (insertPoint < unansweredQuestions.size()) {
+                return unansweredQuestions.get(insertPoint);
+            }
+
+            // If there are no more questions after the current position, return null.
+            return null;
+        }
+
+        // If the current question is in the list, get the next question in the original order.
+        if (currentQuestionIndex + 1 < unansweredQuestions.size()) {
+            return unansweredQuestions.get(currentQuestionIndex + 1);
+        }
+
+        // If there are no more questions after the current one, return null.
         return null;
     }
 
-    public Question getNextQuestionFromSameCard(Long cardId, Integer currentQuestionOrder) {
-        return questionRepository.findFirstByCardIdAndQuestionOrderGreaterThanOrderByQuestionOrderAsc(cardId, currentQuestionOrder).orElse(null);
-    }
 
 
-    public Question getPreviousQuestion(Long userId, Long currentCardId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));  // Assuming you have this method to fetch the user by ID
-        Long currentQuestionId = user.getCurrentQuestionId();
+    public Question getPreviousUnansweredQuestion(User user) {
+        List<Question> unansweredQuestions = user.getUnansweredQuestions();
 
-        if (currentQuestionId == null) {
-            return questionRepository.findTopByOrderByQuestionOrderDesc().orElse(null); // Assuming you might want the last question if no current one is set
-        } else {
-            Question currentQuestion = questionRepository.findById(currentQuestionId).orElse(null);
-            if (currentQuestion != null) {
-                return getPreviousQuestionFromSameCard(currentCardId, currentQuestion.getQuestionOrder());
+        // The method assumes the currentQuestionId of the user is set to the current question's ID.
+        // If it's not set (i.e., null), or the list is empty, then there is no previous question to return.
+        if (user.getCurrentQuestionId() == null || unansweredQuestions.isEmpty()) {
+            return null;
+        }
+
+        // Find the index of the current question
+        int currentIndex = -1;
+        for (int i = unansweredQuestions.size() - 1; i >= 0; i--) {
+            if (unansweredQuestions.get(i).getId().equals(user.getCurrentQuestionId())) {
+                currentIndex = i;
+                break;
             }
         }
+
+        // Get the previous question if it exists
+        // Check if the current index is greater than 0, which means there is a question before it
+        if (currentIndex > 0) {
+            return unansweredQuestions.get(currentIndex - 1);
+        }
+
+        // If the current question is the first in the list or not found, return null
         return null;
     }
 
 
 
-    public Question getPreviousQuestionFromSameCard(Long cardId, Integer currentQuestionOrder) {
-        return questionRepository.findFirstByCardIdAndQuestionOrderLessThanOrderByQuestionOrderDesc(cardId, currentQuestionOrder).orElse(null);
+
+
+    public void processUserAnswers(MultiValueMap<String, String> allRequestParams, User currentUser) {
+        List<String> answerKeys = allRequestParams.keySet().stream()
+                .filter(k -> k.startsWith("answerForQuestion_"))
+                .toList();
+
+        if (answerKeys.isEmpty()) return;
+
+        String[] parts = answerKeys.get(0).split("_");
+        Long currentQuestionId = Long.parseLong(parts[1]);
+
+        int correctAnswersCount = 0;
+        for (String answerKey : answerKeys) {
+            List<String> submittedAnswers = allRequestParams.get(answerKey);
+
+            if (submittedAnswers == null || submittedAnswers.isEmpty()) {
+                continue;
+            }
+
+            for (String submittedAnswer : submittedAnswers) {
+                if (isAnswerCorrect(currentQuestionId, submittedAnswer)) {
+                    correctAnswersCount++;
+                }
+            }
+        }
+
+        // Increment score if all answers for the question are correct
+        if (correctAnswersCount == getNumberOfCorrectAnswers(currentQuestionId)) {
+            incrementUserScore(currentUser.getId());
+        }
+
+        // Updating the state of the user (removing the question from unanswered questions)
+        currentUser.getUnansweredQuestions().removeIf(q -> q.getId().equals(currentQuestionId));
+        List<Long> questIdProcessAnswers = currentUser.getUnansweredQuestions().stream().map(Question::getId).toList();
+        System.out.println("longList = " + questIdProcessAnswers);
+        currentUser.getViewedQuestionsHistory().add(
+                UserQuestionHistory.builder().user(currentUser).question(
+                        Question.builder().id(currentQuestionId).build() // using a reference to the question
+                ).viewedAt(LocalDateTime.now()).build()
+        );
+
+        userRepository.save(currentUser);
     }
 
 
-
-
-
-
-
-    public void setCurrentQuestionId(Long id) {
-        this.currentQuestionId = id;
-    }
 
     public boolean isAnswerCorrect(Long questionId, String submittedAnswer) {
         // Fetch all the correct answers for the given question from the database
@@ -202,8 +345,6 @@ public class ExamService {
     }
 
 
-
-
     public Card getCardById(Long currentCardId) {
         return cardRepository.findById(currentCardId).orElseThrow();
     }
@@ -225,5 +366,11 @@ public class ExamService {
     public Question getLastQuestionFromCard(Card card) {
         return questionRepository.findTopByCardIdOrderByQuestionOrderDesc(card.getId()).orElse(null);
     }
+
+    public Card getCardByQuestionId(Long questionId) {
+        return cardRepository.findCardByQuestionId(questionId);
+    }
+
+
 }
 
