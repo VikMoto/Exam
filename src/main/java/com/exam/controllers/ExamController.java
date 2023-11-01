@@ -145,9 +145,14 @@ public class ExamController {
 
         // Get the current question based on the currentQuestionId of the user
         Question currentQuestion = getCurrentQuestionFromUserInput(currentUser);
+        System.out.println("currentQuestion.getId() in submit = " + currentQuestion.getId());
+        List<Long> longList = currentUser.getUnansweredQuestions().stream().map(Question::getId).toList();
+        System.out.println("questId in submit  = " + longList);
+        System.out.println("currentUser.getCurrentQuestionId() = " + currentUser.getCurrentQuestionId());
 
         // Get the next question using the current question
         Question nextQuestion = examService.getNextUnansweredQuestion(currentUser, currentQuestion);
+        System.out.println("nextQuestion.getId() in submit = " + nextQuestion.getId());
 
         if (nextQuestion == null) return "redirect:/exam/result/" + userId;
 

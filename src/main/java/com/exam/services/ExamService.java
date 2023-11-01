@@ -14,6 +14,8 @@ import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class ExamService {
@@ -123,26 +125,90 @@ public class ExamService {
         userRepository.save(user);
     }
 
+
+//    public Question getNextUnansweredQuestion(User user, Question currentQuestion) {
+//        List<Question> unansweredQuestions = user.getUnansweredQuestions();
+//        Long currentQuestionId = currentQuestion.getId();
+//
+//        System.out.println("currentQuestionId = in getNextUnansweredQuestion " + currentQuestionId);
+//
+//        // If the currentQuestionId is not in the list of unanswered questions,
+//        // assume the next question in the list should be returned.
+//        if (!unansweredQuestions.stream().anyMatch(q -> q.getId().equals(currentQuestionId))) {
+//            if (!unansweredQuestions.isEmpty()) {
+//                // Just get the first unanswered question
+//                return unansweredQuestions.get(0);
+//            }
+//            // If there are no unanswered questions left, return null
+//            return null;
+//        }
+//
+//        // If the currentQuestionId is found in the list,
+//        // proceed to get the next question after it
+//        int currentIndex = -1;
+//        for (int i = 0; i < unansweredQuestions.size(); i++) {
+//            if (unansweredQuestions.get(i).getId().equals(currentQuestionId)) {
+//                currentIndex = i;
+//                break;
+//            }
+//        }
+//
+//        System.out.println("currentIndex = " + currentIndex);
+//
+//        // Get the next question if it exists
+//        if (currentIndex != -1 && currentIndex < unansweredQuestions.size() - 1) {
+//            return unansweredQuestions.get(currentIndex + 1);
+//        }
+//
+//        // If there are no more unanswered questions, return null
+//        return null;
+//    }
+
     public Question getNextUnansweredQuestion(User user, Question currentQuestion) {
         List<Question> unansweredQuestions = user.getUnansweredQuestions();
+        Long currentQuestionId = currentQuestion.getId();
 
-        // Find the index of the current question
-        int currentIndex = -1;
-        for (int i = 0; i < unansweredQuestions.size(); i++) {
-            if (unansweredQuestions.get(i).getId().equals(currentQuestion.getId())) {
-                currentIndex = i;
-                break;
+        // Maintain a separate mapping of question IDs to their original indices.
+        Map<Long, Integer> questionIndexMap = IntStream.range(0, unansweredQuestions.size())
+                .boxed()
+                .collect(Collectors.toMap(i -> unansweredQuestions.get(i).getId(), i -> i));
+        System.out.println("questionIndexMap = " + questionIndexMap);
+
+        // Find the index of the current question based on the map.
+        Integer currentQuestionIndex = questionIndexMap.get(currentQuestionId);
+
+        // If the current question is no longer in the list, find the next index where it used to be.
+        if (currentQuestionIndex == null) {
+            // Find where the current question would fit in the list of remaining question IDs.
+            List<Long> sortedQuestionIds = unansweredQuestions.stream()
+                    .map(Question::getId)
+                    .sorted()
+                    .toList();
+
+            int insertPoint = Collections.binarySearch(sortedQuestionIds, currentQuestionId);
+            if (insertPoint < 0) {
+                // Convert insertPoint to the index where the current ID would be inserted.
+                insertPoint = -insertPoint - 1;
             }
+
+            // If the insert point is within the range of the list, return the question at this position.
+            if (insertPoint < unansweredQuestions.size()) {
+                return unansweredQuestions.get(insertPoint);
+            }
+
+            // If there are no more questions after the current position, return null.
+            return null;
         }
 
-        // Get the next question if it exists
-        if (currentIndex != -1 && currentIndex < unansweredQuestions.size() - 1) {
-            return unansweredQuestions.get(currentIndex + 1);
+        // If the current question is in the list, get the next question in the original order.
+        if (currentQuestionIndex + 1 < unansweredQuestions.size()) {
+            return unansweredQuestions.get(currentQuestionIndex + 1);
         }
 
-        // If there are no more unanswered questions, return null
+        // If there are no more questions after the current one, return null.
         return null;
     }
+
 
 
     public Question getPreviousUnansweredQuestion(User user) {
@@ -209,6 +275,8 @@ public class ExamService {
 
         // Updating the state of the user (removing the question from unanswered questions)
         currentUser.getUnansweredQuestions().removeIf(q -> q.getId().equals(currentQuestionId));
+        List<Long> questIdProcessAnswers = currentUser.getUnansweredQuestions().stream().map(Question::getId).toList();
+        System.out.println("longList = " + questIdProcessAnswers);
         currentUser.getViewedQuestionsHistory().add(
                 UserQuestionHistory.builder().user(currentUser).question(
                         Question.builder().id(currentQuestionId).build() // using a reference to the question
