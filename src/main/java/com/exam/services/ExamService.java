@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ExamService {
@@ -62,6 +64,14 @@ public class ExamService {
         userRepository.save(user);
     }
 
+
+    public void initializeUnansweredQuestionsForUser(User user) {
+        List<Question> allQuestions = questionRepository.findAll();
+        user.getUnansweredQuestions().addAll(allQuestions);
+        userRepository.save(user);
+    }
+
+
     public int calculateScoreForUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -93,6 +103,18 @@ public class ExamService {
     public Question getFirstQuestion() {
         return questionRepository.findFirstByOrderByQuestionOrderAsc();
     }
+
+
+    public void submitAnswer(Long userId, Long questionId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new RuntimeException("Question not found"));
+        user.getUnansweredQuestions().remove(question);
+
+        userRepository.save(user);
+        // Handle answer logic here
+    }
+
 
     public Question getNextQuestion(Long userId, Long currentCardId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found!"));  // Assuming you have this method to fetch the user by ID
@@ -136,6 +158,71 @@ public class ExamService {
     }
 
 
+
+    public Question getNextUnansweredQuestion(Long userId, Long currentCardId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        System.out.println("user.getUnansweredQuestions().ID = " + user.getUnansweredQuestions()
+                .stream().map(Question::getId)
+                .collect(Collectors.toSet()));
+        // Get the current question's order
+        Long currentQuestionId = user.getCurrentQuestionId();
+        Question currentQuestion = questionRepository.findById(currentQuestionId).orElse(null);
+        Integer currentOrder = (currentQuestion != null) ? currentQuestion.getQuestionOrder() : 0;
+
+        // Fetch the list of answered questions by this user
+        Set<Long> answeredQuestions = getAnsweredQuestions(user);
+
+        // Find the next unanswered question in order
+        List<Question> orderedQuestions = questionRepository.findByCardIdOrderByQuestionOrderAsc(currentCardId);
+        for (Question question : orderedQuestions) {
+            if (question.getQuestionOrder() > currentOrder && !answeredQuestions.contains(question.getId())) {
+                return question;
+            }
+        }
+
+        return null; // No next unanswered question found
+    }
+
+    public Question getPreviousUnansweredQuestion(Long userId, Long currentCardId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        System.out.println("user.getUnansweredQuestions().ID = " + user.getUnansweredQuestions()
+                .stream().map(Question::getId)
+                .collect(Collectors.toSet()));
+        // Get the current question's order
+        Long currentQuestionId = user.getCurrentQuestionId();
+        Question currentQuestion = questionRepository.findById(currentQuestionId).orElse(null);
+        Integer currentOrder = (currentQuestion != null) ? currentQuestion.getQuestionOrder() : Integer.MAX_VALUE;
+
+        // Fetch the list of answered questions by this user
+        Set<Long> answeredQuestions = getAnsweredQuestions(user);
+
+        // Find the previous unanswered question in order
+        List<Question> orderedQuestions = questionRepository.findByCardIdOrderByQuestionOrderDesc(currentCardId);
+        for (Question question : orderedQuestions) {
+            if (question.getQuestionOrder() < currentOrder && !answeredQuestions.contains(question.getId())) {
+                return question;
+            }
+        }
+
+        return null; // No previous unanswered question found
+    }
+
+    private Set<Long> getAnsweredQuestions(User user) {
+        // Fetch all question IDs
+        Set<Long> allQuestionIds = questionRepository.findAll().stream()
+                .map(Question::getId)
+                .collect(Collectors.toSet());
+
+        // Fetch all unanswered question IDs
+        Set<Long> unansweredQuestionIds = user.getUnansweredQuestions().stream()
+                .map(Question::getId)
+                .collect(Collectors.toSet());
+
+        // Subtract unanswered from all to get answered question IDs
+        allQuestionIds.removeAll(unansweredQuestionIds);
+
+        return allQuestionIds;
+    }
 
 
 
