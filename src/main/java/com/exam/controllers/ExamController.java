@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -42,192 +43,128 @@ public class ExamController {
         return "step3";
     }
 
+
     @GetMapping("/start")
     public String startExam(Model model) {
-        User user = examService.getLatestRegisteredUser();
-        Card firstCard = examService.getFirstCard(); // New method
-        Question firstQuestion = examService.getFirstQuestionFromCard(firstCard); // New method
+        User currentUser = examService.getLatestRegisteredUser();
 
-        // Set the currentQuestionId for the user
-        if (firstQuestion != null) {
-            updateCurrentQuestionId(user, firstQuestion.getId());
+        Question firstQuestion = currentUser.getUnansweredQuestions().isEmpty() ? null : currentUser.getUnansweredQuestions().get(0);
+        if (firstQuestion == null) {
+            // No more unanswered questions for this user
+            // You might want to redirect the user to another page or show a message
+            return "someOtherView"; // replace this with a valid view or redirect logic
         }
-
-        model.addAttribute("currentCard", firstCard);
-        model.addAttribute("question", firstQuestion);
-        model.addAttribute("user", user);
-
-
-        // Check if the first question has an associated imagePath and add to model
-        if (firstQuestion != null && firstQuestion.getImagePath() != null) {
-            model.addAttribute("imagePath", firstQuestion.getImagePath());
-        }
-
-        return "step4";
+         setModelAttributes(model, currentUser, firstQuestion);
+         return "step4";
     }
 
     @GetMapping("/back")
-    public String goBack(@RequestParam Long userId, @RequestParam Long currentCardId, Model model) {
+    public String goBack(@RequestParam Long userId, Model model) {
         User currentUser = examService.getUserById(userId);
-        Card currentCard = cardService.getCurrentCard(currentCardId).orElseThrow();
+        List<Long> longList = currentUser.getUnansweredQuestions().stream().map(Question::getId).toList();
+        System.out.println("longList = " + longList);
 
-        Question previousQuestion = examService.getPreviousUnansweredQuestion(userId, currentCardId);
+        Question currentQuestion = getCurrentQuestionFromUserInput(currentUser);
 
-        if (previousQuestion == null) {
-            Card previousCard = cardService.getPreviousCard(currentCardId);
-            if (previousCard == null) {
-                return "redirect:/exam/start";
-            }
-            previousQuestion = examService.getLastQuestionFromCard(previousCard);
-            model.addAttribute("currentCard", previousCard);  // Add the previous card to the model
-        } else {
-            model.addAttribute("currentCard", currentCard);  // Add the current card to the model
-        }
+        Question previousQuestion = examService.getPreviousUnansweredQuestion(currentUser);
+        System.out.println("previousQuestion.getId() = " + previousQuestion.getId());
 
+        if (previousQuestion == null) return "redirect:/exam/start";
+
+        // Update the currentQuestionId for the user
         updateCurrentQuestionId(currentUser, previousQuestion.getId());
-        model.addAttribute("question", previousQuestion);
-        model.addAttribute("user", currentUser);
 
-        if (previousQuestion.getImagePath() != null) {
-            model.addAttribute("imagePath", previousQuestion.getImagePath());
-        }
+        // Set attributes for the model
+        setModelAttributes(model, currentUser, previousQuestion);
 
         return "step4";
     }
-
-
 
     @GetMapping("/next")
-    public String goNext(@RequestParam Long userId, @RequestParam Long currentCardId, Model model) {
+    public String goNext(@RequestParam Long userId, Model model) {
         User currentUser = examService.getUserById(userId);
-        Card currentCard = cardService.getCurrentCard(currentCardId).orElseThrow();
+        List<Long> longList = currentUser.getUnansweredQuestions().stream().map(Question::getId).toList();
+        System.out.println("longList = " + longList);
+        Question currentQuestion = getCurrentQuestionFromUserInput(currentUser); // You need to implement this
 
-        Question nextQuestion = examService.getNextUnansweredQuestion(userId, currentCardId);
-
-        if (nextQuestion == null) {
-            Card nextCard = cardService.getNextCard(currentCardId);
-            if (nextCard == null) {
-                return "redirect:/exam/result/" + userId;
-            }
-            nextQuestion = examService.getFirstQuestionFromCard(nextCard);
-            model.addAttribute("currentCard", nextCard);  // Add the next card to the model
-        } else {
-            model.addAttribute("currentCard", currentCard);  // Add the current card to the model
+        if (currentQuestion == null) {
+            // Handle this case - maybe this is the start of the exam or an error state
         }
 
-        if (nextQuestion == null) {
-            return "redirect:/exam/result/" + userId;
-        }
+        Question nextQuestion = examService.getNextUnansweredQuestion(currentUser, currentQuestion);
+        System.out.println("nextQuestion.getId() = " + nextQuestion.getId());
 
+        if (nextQuestion == null) return "redirect:/exam/result/" + userId;
+
+        // Update the currentQuestionId for the user
         updateCurrentQuestionId(currentUser, nextQuestion.getId());
-        model.addAttribute("question", nextQuestion);
-        model.addAttribute("user", currentUser);
 
-        if (nextQuestion.getImagePath() != null) {
-            model.addAttribute("imagePath", nextQuestion.getImagePath());
-        }
+        // Set attributes for the model
+        setModelAttributes(model, currentUser, nextQuestion);
 
         return "step4";
     }
 
+    private Question getCurrentQuestionFromUserInput(User user) {
+        if (user.getCurrentQuestionId() == null) {
+            // No current question is set, return null or handle accordingly
+            return null;
+        }
 
+        // Assuming there is a service or repository method to find a question by its ID
+        return questionService.getQuestionById(user.getCurrentQuestionId());
+    }
+
+
+    private void setModelAttributes(Model model, User currentUser, Question question) {
+
+        Card currentCard = examService.getCardByQuestionId(question.getId());
+
+        model.addAttribute("question", question);
+        model.addAttribute("user", currentUser);
+        model.addAttribute("currentCard", currentCard);
+        if (question.getImagePath() != null) {
+            model.addAttribute("imagePath", question.getImagePath());
+        }
+    }
 
 
     @PostMapping("/submit")
-    public String submitAnswer(@RequestParam(name = "userId") Long userId,
-                               @RequestParam(name = "currentCardId") Long currentCardId,
+    public String submitAnswer(@RequestParam Long userId,
                                @RequestParam MultiValueMap<String, String> allRequestParams,
                                Model model) {
 
         User currentUser = examService.getUserById(userId);
         String action = allRequestParams.getFirst("action");
 
-        if ("Back".equals(action)) {
-            System.out.println("currentUser = " + currentUser);
-            System.out.println("currentCardId = " + currentCardId);
-            // Logic to move to the previous card or question
-            return goBack(userId, currentCardId,model);
-        } else if ("Next".equals(action)) {
-            System.out.println("currentUser = " + currentUser);
-            System.out.println("currentCardId = " + currentCardId);
-            // Logic to move to the next card or question
-            return goNext(userId, currentCardId,model);
-        }
+        if ("Back".equals(action)) return goBack(userId, model);
+        if ("Next".equals(action)) return goNext(userId, model);
 
-        // All keys that start with "answerForQuestion_" are related to answers
-        List<String> answerKeys = allRequestParams.keySet().stream()
-                .filter(k -> k.startsWith("answerForQuestion_"))
-                .toList();
+        // Process answers before finding the next question
+        examService.processUserAnswers(allRequestParams, currentUser);
 
+        // Get the current question based on the currentQuestionId of the user
+        Question currentQuestion = getCurrentQuestionFromUserInput(currentUser);
 
-        if (!answerKeys.isEmpty()) {
-            // Take the first key to get the current question ID
-            String[] parts = answerKeys.get(0).split("_");
-            Long currentQuestionId = Long.parseLong(parts[1]);
+        // Get the next question using the current question
+        Question nextQuestion = examService.getNextUnansweredQuestion(currentUser, currentQuestion);
 
-//            examService.setCurrentQuestionId(currentQuestionId);
+        if (nextQuestion == null) return "redirect:/exam/result/" + userId;
 
-            updateCurrentQuestionId(currentUser, currentQuestionId);
+        // Update the currentQuestionId for the user
+        updateCurrentQuestionId(currentUser, nextQuestion.getId());
 
-            int correctAnswersCount = 0; // To keep track of correct answers for a given question
-            // Iterate over all submitted answers for the question
-            for (String answerKey : answerKeys) {
-                List<String> submittedAnswers = allRequestParams.get(answerKey);
-//                System.out.println("submittedAnswers = " + submittedAnswers);
-
-                if (submittedAnswers == null || submittedAnswers.isEmpty()) {
-                    continue;  // Skip processing for null or empty values
-                }
-
-                for (String submittedAnswer : submittedAnswers) {
-                    if (examService.isAnswerCorrect(currentQuestionId, submittedAnswer)) {
-                        correctAnswersCount++;
-                    }
-                }
-            }
-            // Check if the user got all answers correct
-            if (correctAnswersCount == examService.getNumberOfCorrectAnswers(currentQuestionId)) {
-                examService.submitAnswer(userId, currentQuestionId);
-                examService.incrementUserScore(userId);
-            }
-        }
-
-        Question nextQuestion = examService.getNextUnansweredQuestion(userId, currentCardId);
-
-
-        // If there's no next question within the same card, find the next card.
-        if (nextQuestion == null) {
-            Card nextCard = cardService.getNextCard(currentCardId);
-
-            if (nextCard == null) {
-                return "redirect:/exam/result/" + userId;
-            }
-
-            model.addAttribute("currentCard", nextCard);
-            nextQuestion = examService.getFirstQuestionFromCard(nextCard);
-
-            if (nextQuestion == null) {
-                return "redirect:/exam/result/" + userId;
-            } else {
-                updateCurrentQuestionId(currentUser, nextQuestion.getId());
-            }
-
-
-        } else {
-            model.addAttribute("currentCard", examService.getCardById(currentCardId));
-
-            updateCurrentQuestionId(currentUser, nextQuestion.getId());
-        }
-
-        model.addAttribute("question", nextQuestion);
-        model.addAttribute("user", currentUser);
-
-        if (nextQuestion != null && nextQuestion.getImagePath() != null) {
-            model.addAttribute("imagePath", nextQuestion.getImagePath());
-        }
-
+        setModelAttributes(model, currentUser, nextQuestion);
         return "step4";
     }
+
+    private void initializeModelWithQuestion(User user, Question question, Model model) {
+        model.addAttribute("user", user);
+        model.addAttribute("question", question);
+        model.addAttribute("imagePath", question != null ? question.getImagePath() : null);
+        updateCurrentQuestionId(user, question != null ? question.getId() : null);
+    }
+
 
     private void updateCurrentQuestionId(User currentUser, Long nextQuestion) {
         currentUser.setCurrentQuestionId(nextQuestion);  // Setting the user's current question ID

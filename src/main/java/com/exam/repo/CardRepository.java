@@ -17,5 +17,12 @@ public interface CardRepository extends JpaRepository<Card, Long> {
 
 
     @Query("SELECT c FROM Card c ORDER BY c.id ASC")
+    
     List<Card> findAllOrderedById();
+
+    @Query("SELECT c FROM Card c JOIN c.questions q WHERE q.id = :questionId")
+    Card findCardByQuestionId(@Param("questionId") Long questionId);
+
+
+    List<Card> findAllByOrderByIdAsc();
 }

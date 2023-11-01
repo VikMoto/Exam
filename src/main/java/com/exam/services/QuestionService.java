@@ -35,8 +35,8 @@ public class QuestionService {
         questionRepository.deleteById(questionId);
     }
 
-    public Optional<Object> getQuestionById(Long questionId) {
-        return Optional.of(questionRepository.findById(questionId));
+    public Question getQuestionById(Long questionId) {
+        return questionRepository.findById(questionId).orElseThrow();
     }
 
 
