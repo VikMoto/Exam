@@ -55,35 +55,51 @@ public class ExamController {
             // You might want to redirect the user to another page or show a message
             return "someOtherView"; // replace this with a valid view or redirect logic
         }
-
+//        boolean isFirstQuestion = true;
         boolean isLastQuestion = currentUser.getUnansweredQuestions().indexOf(firstQuestion) == currentUser.getUnansweredQuestions().size() - 1;
          setModelAttributes(model, currentUser, firstQuestion);
         model.addAttribute("isLastQuestion", isLastQuestion);
+//        model.addAttribute("isFirstQuestion", isFirstQuestion);
          return "step4";
     }
 
     @GetMapping("/back")
     public String goBack(@RequestParam Long userId, Model model) {
         User currentUser = examService.getUserById(userId);
-        List<Long> longList = currentUser.getUnansweredQuestions().stream().map(Question::getId).toList();
-        System.out.println("longList = " + longList);
 
         Question currentQuestion = getCurrentQuestionFromUserInput(currentUser);
+        if (currentQuestion == null) {
+            model.addAttribute("message", "There is no previous question to go back to.");
+            return "step4"; // assuming "step4" is the view for displaying questions
+        }
 
+        // Check if the current question is the first in the list of unanswered questions
+        boolean isFirstQuestion = currentUser.getUnansweredQuestions().indexOf(currentQuestion) == 0;
+        System.out.println("isFirstQuestion = " + isFirstQuestion);
+
+        if (isFirstQuestion) {
+            // Stay on the same page since this is the first question
+            // You can add a message to the model to inform the user if necessary
+            model.addAttribute("message", "You are already at the first question.");
+            model.addAttribute("isLastQuestion", Boolean.FALSE);
+            setModelAttributes(model, currentUser, currentQuestion); // Re-set attributes if needed
+//            model.addAttribute("isFirstQuestion", isFirstQuestion);
+            return "step4"; // assuming "step4" is the view for displaying questions
+        }
 
         Question previousQuestion = examService.getPreviousUnansweredQuestion(currentUser);
         System.out.println("previousQuestion.getId() = " + previousQuestion.getId());
 
-        if (previousQuestion == null) return "redirect:/exam/start";
+        if (previousQuestion.getId() == null) return "step4";
 
         // Update the currentQuestionId for the user
         updateCurrentQuestionId(currentUser, previousQuestion.getId());
-
+//        boolean isFirstQuestion = currentUser.getUnansweredQuestions().indexOf(previousQuestion) == 0;
         boolean isLastQuestion = currentUser.getUnansweredQuestions().indexOf(previousQuestion) == currentUser.getUnansweredQuestions().size() - 1;
         // Set attributes for the model
         setModelAttributes(model, currentUser, previousQuestion);
         model.addAttribute("isLastQuestion", isLastQuestion);
-
+//        model.addAttribute("isFirstQuestion", isFirstQuestion);
         return "step4";
     }
 
@@ -103,7 +119,7 @@ public class ExamController {
 
         // Check if this is the last unanswered question
         boolean isLastQuestion = currentUser.getUnansweredQuestions().indexOf(nextQuestion) == currentUser.getUnansweredQuestions().size() - 1;
-
+//        boolean isFirstQuestion = currentUser.getUnansweredQuestions().indexOf(nextQuestion) == 0;
         if (nextQuestion == null) return "redirect:/exam/result/" + userId;
 
         // Update the currentQuestionId for the user
@@ -112,7 +128,7 @@ public class ExamController {
         // Set attributes for the model
         setModelAttributes(model, currentUser, nextQuestion);
         model.addAttribute("isLastQuestion", isLastQuestion);
-
+//        model.addAttribute("isFirstQuestion", isFirstQuestion);
         return "step4";
     }
 
@@ -165,15 +181,17 @@ public class ExamController {
         // Get the next question using the current question
         Question nextQuestion = examService.getNextUnansweredQuestion(currentUser, currentQuestion);
         System.out.println("nextQuestion.getId() in submit = " + nextQuestion.getId());
-        boolean isLastQuestion = currentUser.getUnansweredQuestions().indexOf(nextQuestion) == currentUser.getUnansweredQuestions().size() - 1;
 
         if (nextQuestion == null) return "redirect:/exam/result/" + userId;
 
         // Update the currentQuestionId for the user
         updateCurrentQuestionId(currentUser, nextQuestion.getId());
 
+        boolean isLastQuestion = currentUser.getUnansweredQuestions().indexOf(nextQuestion) == currentUser.getUnansweredQuestions().size() - 1;
+//        boolean isFirstQuestion = currentUser.getUnansweredQuestions().indexOf(nextQuestion) == 0;
         setModelAttributes(model, currentUser, nextQuestion);
         model.addAttribute("isLastQuestion", isLastQuestion);
+//        model.addAttribute("isFirstQuestion", isFirstQuestion);
         return "step4";
     }
 
