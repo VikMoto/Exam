@@ -36,6 +36,11 @@ public class QuestionController {
         this.answerService = answerService;
     }
 
+    @GetMapping("/admin-panel")
+    public String adminPanel() {
+        return "redirect:/admin"; // This should be the name of your Thymeleaf template without the .html extension.
+    }
+
     @GetMapping("/manage-cards")
     public String showManageCards(Model model) {
         Iterable<Card> cards = cardService.getAllCards();  // Assuming you have this method in your CardService
