@@ -27,6 +27,10 @@ public class UserController {
         return "users/list";
     }
 
+    @GetMapping("/admin-panel")
+    public String adminPanel() {
+        return "redirect:/admin"; // This should be the name of your Thymeleaf template without the .html extension.
+    }
 
     // For RESTful practices, it's good to use the HTTP DELETE method for deletions.
     // However, HTML forms only support GET and POST methods. We would need to use JavaScript
