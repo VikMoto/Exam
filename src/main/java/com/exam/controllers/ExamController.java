@@ -87,7 +87,7 @@ public class ExamController {
             return "step4"; // assuming "step4" is the view for displaying questions
         }
 
-        Question previousQuestion = examService.getPreviousUnansweredQuestion(currentUser);
+        Question previousQuestion = examService.getPreviousUnansweredQuestion(currentUser, currentQuestion);
         System.out.println("previousQuestion.getId() = " + previousQuestion.getId());
 
         if (previousQuestion.getId() == null) return "step4";
@@ -171,8 +171,9 @@ public class ExamController {
         // Process answers before finding the next question
         examService.processUserAnswers(allRequestParams, currentUser);
 
-        // Get the current question based on the currentQuestionId of the user
+//        // Get the current question based on the currentQuestionId of the user
         Question currentQuestion = getCurrentQuestionFromUserInput(currentUser);
+
         System.out.println("currentQuestion.getId() in submit = " + currentQuestion.getId());
         List<Long> longList = currentUser.getUnansweredQuestions().stream().map(Question::getId).toList();
         System.out.println("questId in submit  = " + longList);
@@ -180,18 +181,31 @@ public class ExamController {
 
         // Get the next question using the current question
         Question nextQuestion = examService.getNextUnansweredQuestion(currentUser, currentQuestion);
-        System.out.println("nextQuestion.getId() in submit = " + nextQuestion.getId());
 
-        if (nextQuestion == null) return "redirect:/exam/result/" + userId;
 
-        // Update the currentQuestionId for the user
+        if (nextQuestion == null) {
+            // If there's no next question, this could be the last question that was answered.
+            // You may need to implement getPreviousUnansweredQuestion similar to getNextUnansweredQuestion
+            Question previousQuestion = examService.getPreviousUnansweredQuestion(currentUser, currentQuestion);
+            if (previousQuestion != null) {
+                // Go back to the previous unanswered question if it exists
+                updateCurrentQuestionId(currentUser, previousQuestion.getId());
+                setModelAttributes(model, currentUser, previousQuestion);
+                model.addAttribute("isLastQuestion", false); // It's not the last question since we went back
+                return "step4"; // Or whatever view you use for displaying the question
+            } else {
+                // This was the last unanswered question and it has been answered
+                return "redirect:/exam/result/" + userId;
+            }
+        }
+
         updateCurrentQuestionId(currentUser, nextQuestion.getId());
+        // Update the currentQuestionId for the user
 
         boolean isLastQuestion = currentUser.getUnansweredQuestions().indexOf(nextQuestion) == currentUser.getUnansweredQuestions().size() - 1;
-//        boolean isFirstQuestion = currentUser.getUnansweredQuestions().indexOf(nextQuestion) == 0;
         setModelAttributes(model, currentUser, nextQuestion);
         model.addAttribute("isLastQuestion", isLastQuestion);
-//        model.addAttribute("isFirstQuestion", isFirstQuestion);
+
         return "step4";
     }
 
