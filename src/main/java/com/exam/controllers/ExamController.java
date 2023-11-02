@@ -214,6 +214,18 @@ public class ExamController {
         return "redirect:/exam/result/" + userId;
     }
 
+//    @PostMapping("/endTest")
+//    public String endTest(@RequestParam Long userId, Model model) {
+//        // This method could also perform any necessary actions before ending the test
+//        // such as logging the end of the test, updating the user's status, etc.
+//
+//        // Perform any required clean-up or saving operations before ending the test
+////        finalizeTestForUser(userId);
+//
+//        // Redirect to the result page
+//        return "redirect:/exam/result/" + userId;
+//    }
+
     private void updateCurrentQuestionId(User currentUser, Long nextQuestion) {
         currentUser.setCurrentQuestionId(nextQuestion);  // Setting the user's current question ID
         examService.updateUser(currentUser); // Updating the user

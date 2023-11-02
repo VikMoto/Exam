@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
 
 <head>
     <meta charset="UTF-8">
@@ -14,14 +14,14 @@
 <div class="container mt-5">
     <div class="card">
         <div class="card-header">
-            <h2 class="mb-0">Results</h2>
+            <h2 class="mb-0">Результати тестів</h2>
         </div>
         <div class="card-body">
-            <p><strong>Your Name:</strong> <span th:text="${user.firstName}"></span></p>
-            <p><strong>Your Last Name:</strong> <span th:text="${user.lastName}"></span></p>
-            <p><strong>You scored:</strong> <span th:text="${score}"></span> points out of 60</p>
-            <p><strong>Your rating:</strong> <span th:text="${rating}"></span></p>
-            <a th:href="@{/exam/conclusion}" class="btn btn-primary mt-3">Conclusion</a>
+            <p><strong>Ваше ім'я:</strong> <span th:text="${user.firstName}"></span></p>
+            <p><strong>Ваше прізвище:</strong> <span th:text="${user.lastName}"></span></p>
+            <p><strong>Кількість балів:</strong> <span th:text="${score}"></span> балів з 60</p>
+            <p><strong>Ваша оцінка:</strong> <span th:text="${rating}"></span></p>
+            <a th:href="@{/exam/}" class="btn btn-primary mt-3">Почати тест спочатку</a>
         </div>
     </div>
 </div>

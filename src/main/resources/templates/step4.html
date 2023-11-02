@@ -76,16 +76,16 @@
                 <!-- Bottom buttons: -->
                 <div class="button-container mt-3">
 
-                    <button id="back-btn" type="button" class="btn btn-secondary">Back</button>
+                    <button id="back-btn" type="button" class="btn btn-secondary">Назад</button>
 
-                    <button id="confirm-btn" type="submit" class="btn btn-primary">Confirm</button>
+                    <button id="confirm-btn" type="submit" class="btn btn-primary">Підтвердити</button>
                     <!-- Conditionally render Next or End Test button based on isLastQuestion flag -->
                     <div th:if="${!isLastQuestion}">
-                        <button id="next-btn" type="button" class="btn btn-success">Next</button>
+                        <button id="next-btn" type="button" class="btn btn-success">Далі</button>
                     </div>
                     <div th:if="${isLastQuestion}">
                         <!-- The End Test button has type 'button' so it doesn't submit the form by default -->
-                        <button id="end-test-btn" type="button" class="btn btn-danger">End Test</button>
+                        <button id="end-test-btn" type="button" class="btn btn-danger">Тестування завершено</button>
                     </div>
                 </div>
 
