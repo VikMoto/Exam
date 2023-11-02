@@ -172,7 +172,7 @@ public class ExamService {
         Map<Long, Integer> questionIndexMap = IntStream.range(0, unansweredQuestions.size())
                 .boxed()
                 .collect(Collectors.toMap(i -> unansweredQuestions.get(i).getId(), i -> i));
-        System.out.println("questionIndexMap = " + questionIndexMap);
+        System.out.println("questionIndexMap from NextService= " + questionIndexMap);
 
         // Find the index of the current question based on the map.
         Integer currentQuestionIndex = questionIndexMap.get(currentQuestionId);
@@ -211,33 +211,51 @@ public class ExamService {
 
 
 
-    public Question getPreviousUnansweredQuestion(User user) {
+    public Question getPreviousUnansweredQuestion(User user, Question currentQuestion) {
         List<Question> unansweredQuestions = user.getUnansweredQuestions();
+        Long currentQuestionId = currentQuestion.getId();
 
-        // The method assumes the currentQuestionId of the user is set to the current question's ID.
-        // If it's not set (i.e., null), or the list is empty, then there is no previous question to return.
-        if (user.getCurrentQuestionId() == null || unansweredQuestions.isEmpty()) {
+        // Maintain a separate mapping of question IDs to their original indices.
+        Map<Long, Integer> questionIndexMap = IntStream.range(0, unansweredQuestions.size())
+                .boxed()
+                .collect(Collectors.toMap(i -> unansweredQuestions.get(i).getId(), i -> i));
+        System.out.println("questionIndexMap from PreviousService = " + questionIndexMap);
+
+        // Find the index of the current question based on the map.
+        Integer currentQuestionIndex = questionIndexMap.get(currentQuestionId);
+
+        // If the current question is no longer in the list, find the previous index where it used to be.
+        if (currentQuestionIndex == null) {
+            // Find where the current question would fit in the list of remaining question IDs.
+            List<Long> sortedQuestionIds = unansweredQuestions.stream()
+                    .map(Question::getId)
+                    .sorted()
+                    .collect(Collectors.toList());
+
+            int insertPoint = Collections.binarySearch(sortedQuestionIds, currentQuestionId);
+            if (insertPoint < 0) {
+                // Convert insertPoint to the index one position before where the current ID would be inserted.
+                insertPoint = -insertPoint - 2;
+            }
+
+            // If the insert point is within the range of the list, return the question at this position.
+            if (insertPoint >= 0 && insertPoint < unansweredQuestions.size()) {
+                return unansweredQuestions.get(insertPoint);
+            }
+
+            // If there are no more questions before the current position, return null.
             return null;
         }
 
-        // Find the index of the current question
-        int currentIndex = -1;
-        for (int i = unansweredQuestions.size() - 1; i >= 0; i--) {
-            if (unansweredQuestions.get(i).getId().equals(user.getCurrentQuestionId())) {
-                currentIndex = i;
-                break;
-            }
+        // If the current question is in the list, get the previous question in the original order.
+        if (currentQuestionIndex > 0) {
+            return unansweredQuestions.get(currentQuestionIndex - 1);
         }
 
-        // Get the previous question if it exists
-        // Check if the current index is greater than 0, which means there is a question before it
-        if (currentIndex > 0) {
-            return unansweredQuestions.get(currentIndex - 1);
-        }
-
-        // If the current question is the first in the list or not found, return null
+        // If there are no more questions before the current one, return null.
         return null;
     }
+
 
 
 
