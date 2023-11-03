@@ -16,83 +16,114 @@
             max-height: 400px;
         }
 
-        /* New styles for buttons */
         .button-container {
             display: flex;
-            justify-content: left; /* Center the buttons horizontally */
-            gap: 10px; /* Add some space between the buttons */
+            justify-content: center; /* Align buttons to the center */
+            gap: 10px;
         }
 
         .button-container button:hover {
-            background-color: #FFA07A; /* Light orange background on hover */
+            background-color: #FFA07A;
         }
 
-        /* New style for container background */
         .card {
-            background-color: #FFFFE0; /* Light blue background */
+            background-color: #FFFFE0;
         }
 
         .card-header {
-            background-color: #66d4ff; /* Light blue background */
+            background-color: #66d4ff;
         }
+
+        /* Additional styles for centering the card */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 600px; /* You can adjust this as needed */
+        }
+        .mb-0 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
 
     </style>
 </head>
 
 <body>
-<div class="container mt-5">
-    <div class="card">
-        <div class="card-header">
-            <!-- Display name of the card here -->
-            <h2 class="mb-0" th:text="${currentCard.name} ? 'Відповіді на питання: ' + ${currentCard.name} : 'Answer the Question'"></h2>
-        </div>
-        <div class="card-body">
-            <!-- Fallback for question content -->
-            <div th:text="${question != null ? question.content : 'Default content'}"></div>
 
+<div class="container d-flex vh-100 align-items-center justify-content-center">
 
-            <!-- Display image for the question if it exists with constrained size -->
-            <img th:if="${imagePath}" th:src="@{${imagePath}}" alt="Question Image" class="img-fluid mb-3 constrained-image">
-
-            <form th:action="@{/exam/submit}" method="post">
-                <!-- Hidden input for capturing user's ID -->
-                <input type="hidden" th:value="${user.id}" name="userId">
-                <!-- Hidden input for capturing current card's ID -->
-                <input type="hidden" th:value="${currentCard.id}" name="currentCardId">
-
-                <fieldset class="form-group">
-                    <legend th:text="${question.content}"></legend>
-                    <!-- Display choices for the current question -->
-                    <th:block th:each="answer : ${question.answers}">
-                        <div class="form-check">
-                            <label>
-                                <input class="form-check-input" type="checkbox" th:value="${answer.id}" th:name="${'answerForQuestion_' + question.id}">
-                            </label>
-                            <label class="form-check-label" th:text="${answer.content}"></label>
-                        </div>
-                    </th:block>
-                </fieldset>
-
-                <!-- Bottom buttons: -->
-                <div class="button-container mt-3">
-
-                    <button id="back-btn" type="button" class="btn btn-secondary">Назад</button>
-
-                    <button id="confirm-btn" type="submit" class="btn btn-primary">Підтвердити</button>
-                    <!-- Conditionally render Next or End Test button based on isLastQuestion flag -->
-                    <div th:if="${!isLastQuestion}">
-                        <button id="next-btn" type="button" class="btn btn-success">Далі</button>
-                    </div>
-                    <div th:if="${isLastQuestion}">
-                        <!-- The End Test button has type 'button' so it doesn't submit the form by default -->
-                        <button id="end-test-btn" type="button" class="btn btn-danger">Тестування завершено</button>
-                    </div>
+        <div class="container mt-5">
+            <div class="card">
+                <div class="card-header">
+                    <!-- Display name of the card here -->
+                    <h2 class="mb-0" th:text="${currentCard.name} ?  ${currentCard.name} : 'Answer the Question'"></h2>
                 </div>
+                <div class="card-body">
+<!--                    &lt;!&ndash; Fallback for question content &ndash;&gt;-->
+<!--                    <div th:text="${question != null ? question.content : 'Default content'}"></div>-->
 
-            </form> <!-- Closing the form tag -->
+
+                    <!-- Display image for the question if it exists with constrained size -->
+                    <img th:if="${imagePath}" th:src="@{${imagePath}}" alt="Question Image" class="img-fluid mb-3 constrained-image d-block mx-auto">
+
+                    <!-- Separate container for the question's legend -->
+                    <div class="mt-3">
+                        <fieldset class="form-group">
+                            <legend style="text-align: center;" th:text="${question.content}">Default Question Content</legend>
+                        </fieldset>
+                    </div>
+
+                    <form th:action="@{/exam/submit}" method="post">
+                        <!-- Hidden input for capturing user's ID -->
+                        <input type="hidden" th:value="${user.id}" name="userId">
+                        <!-- Hidden input for capturing current card's ID -->
+                        <input type="hidden" th:value="${currentCard.id}" name="currentCardId">
+
+                        <fieldset class="form-group">
+<!--                            <legend th:text="${question.content}"></legend>-->
+                            <!-- Display choices for the current question -->
+                            <th:block th:each="answer : ${question.answers}">
+                                <div class="form-check">
+                                    <label>
+                                        <input class="form-check-input" type="checkbox" th:value="${answer.id}" th:name="${'answerForQuestion_' + question.id}">
+                                    </label>
+                                    <label class="form-check-label" th:text="${answer.content}"></label>
+                                </div>
+                            </th:block>
+                        </fieldset>
+
+                        <!-- Bottom buttons: -->
+                        <div class="button-container mt-3">
+
+                            <button id="back-btn" type="button" class="btn btn-secondary">Назад</button>
+
+                            <button id="confirm-btn" type="submit" class="btn btn-primary">Підтвердити</button>
+                            <!-- Conditionally render Next or End Test button based on isLastQuestion flag -->
+                            <div th:if="${!isLastQuestion}">
+                                <button id="next-btn" type="button" class="btn btn-success">Далі</button>
+                            </div>
+                            <div th:if="${isLastQuestion}">
+                                <!-- The End Test button has type 'button' so it doesn't submit the form by default -->
+                                <button id="end-test-btn" type="button" class="btn btn-danger">Тестування завершено</button>
+                            </div>
+                        </div>
+
+                    </form> <!-- Closing the form tag -->
+                </div>
+            </div>
         </div>
-    </div>
+
 </div>
+
 
 <!-- Optional: Include Bootstrap JS and Popper.js for dropdowns, modals, etc. -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
