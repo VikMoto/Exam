@@ -9,19 +9,19 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5435:5432"
-#      - "5432:5432"
-#
-#  app:
-#    build: .
-#    container_name: Exam_App
-#    depends_on:
-#      - postgres
-#    ports:
-#      - "8181:8181"
-#    volumes:
-#      - uploads_volume:/app/uploads/
-#    command: ["./wait-for-it.sh", "postgres:5432", "--", "java", "-jar", "app.jar"]
-#
-#volumes:
-#  uploads_volume:
+#      - "5435:5432"
+      - "5432:5432"
+
+  app:
+    build: .
+    container_name: Exam_App
+    depends_on:
+      - postgres
+    ports:
+      - "8181:8181"
+    volumes:
+      - uploads_volume:/app/uploads/
+    command: ["./wait-for-it.sh", "postgres:5432", "--", "java", "-jar", "app.jar"]
+
+volumes:
+  uploads_volume:
