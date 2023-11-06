@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.exam.ExamApplicationTests" tests="1" skipped="0" failures="1" errors="0" timestamp="2023-11-06T17:51:07" hostname="DESKTOP-USLNI00" time="0.006">
+<testsuite name="com.exam.ExamApplicationTests" tests="1" skipped="0" failures="1" errors="0" timestamp="2023-11-06T19:11:43" hostname="DESKTOP-USLNI00" time="0.005">
   <properties/>
-  <testcase name="contextLoads()" classname="com.exam.ExamApplicationTests" time="0.006">
+  <testcase name="contextLoads()" classname="com.exam.ExamApplicationTests" time="0.005">
     <failure message="java.lang.IllegalStateException: Failed to load ApplicationContext for [WebMergedContextConfiguration@4b8cde43 testClass = com.exam.ExamApplicationTests, locations = [], classes = [com.exam.ExamApplication], contextInitializerClasses = [], activeProfiles = [], propertySourceLocations = [], propertySourceProperties = [&quot;org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true&quot;], contextCustomizers = [org.springframework.boot.test.autoconfigure.actuate.observability.ObservabilityContextCustomizerFactory$DisableObservabilityContextCustomizer@1f, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizer@5aac4250, org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@7ca33c24, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@178213b, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@4af0df05, org.springframework.boot.test.context.SpringBootTestAnnotation@d6abe04d], resourceBasePath = &quot;src/main/webapp&quot;, contextLoader = org.springframework.boot.test.context.SpringBootContextLoader, parent = null]" type="java.lang.IllegalStateException">java.lang.IllegalStateException: Failed to load ApplicationContext for [WebMergedContextConfiguration@4b8cde43 testClass = com.exam.ExamApplicationTests, locations = [], classes = [com.exam.ExamApplication], contextInitializerClasses = [], activeProfiles = [], propertySourceLocations = [], propertySourceProperties = [&quot;org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true&quot;], contextCustomizers = [org.springframework.boot.test.autoconfigure.actuate.observability.ObservabilityContextCustomizerFactory$DisableObservabilityContextCustomizer@1f, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizer@5aac4250, org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@7ca33c24, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@178213b, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@4af0df05, org.springframework.boot.test.context.SpringBootTestAnnotation@d6abe04d], resourceBasePath = &quot;src/main/webapp&quot;, contextLoader = org.springframework.boot.test.context.SpringBootContextLoader, parent = null]
 	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:143)
 	at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:127)
@@ -176,8 +176,8 @@ Caused by: java.net.UnknownHostException: postgres
 	... 145 more
 </failure>
   </testcase>
-  <system-out><![CDATA[19:50:58.663 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.exam.ExamApplicationTests]: ExamApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-19:50:58.804 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.exam.ExamApplication for test class com.exam.ExamApplicationTests
+  <system-out><![CDATA[21:11:34.646 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.exam.ExamApplicationTests]: ExamApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+21:11:34.780 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.exam.ExamApplication for test class com.exam.ExamApplicationTests
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -187,16 +187,16 @@ Caused by: java.net.UnknownHostException: postgres
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v3.1.5)
 
-2023-11-06T19:50:59.404+02:00  INFO 12616 --- [    Test worker] com.exam.ExamApplicationTests            : Starting ExamApplicationTests using Java 17.0.6 with PID 12616 (started by adifi in E:\HOME\ELECTRO\Exam)
-2023-11-06T19:50:59.406+02:00  INFO 12616 --- [    Test worker] com.exam.ExamApplicationTests            : No active profile set, falling back to 1 default profile: "default"
-2023-11-06T19:51:00.322+02:00  INFO 12616 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2023-11-06T19:51:00.419+02:00  INFO 12616 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 87 ms. Found 4 JPA repository interfaces.
-2023-11-06T19:51:01.155+02:00  INFO 12616 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2023-11-06T19:51:01.229+02:00  INFO 12616 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.2.13.Final
-2023-11-06T19:51:01.232+02:00  INFO 12616 --- [    Test worker] org.hibernate.cfg.Environment            : HHH000406: Using bytecode reflection optimizer
-2023-11-06T19:51:01.617+02:00  INFO 12616 --- [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2023-11-06T19:51:01.666+02:00  INFO 12616 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2023-11-06T19:51:05.023+02:00 ERROR 12616 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.
+2023-11-06T21:11:35.380+02:00  INFO 25876 --- [    Test worker] com.exam.ExamApplicationTests            : Starting ExamApplicationTests using Java 17.0.6 with PID 25876 (started by adifi in E:\HOME\ELECTRO\Exam)
+2023-11-06T21:11:35.382+02:00  INFO 25876 --- [    Test worker] com.exam.ExamApplicationTests            : No active profile set, falling back to 1 default profile: "default"
+2023-11-06T21:11:36.317+02:00  INFO 25876 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-11-06T21:11:36.410+02:00  INFO 25876 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 81 ms. Found 4 JPA repository interfaces.
+2023-11-06T21:11:37.162+02:00  INFO 25876 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-11-06T21:11:37.242+02:00  INFO 25876 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.2.13.Final
+2023-11-06T21:11:37.245+02:00  INFO 25876 --- [    Test worker] org.hibernate.cfg.Environment            : HHH000406: Using bytecode reflection optimizer
+2023-11-06T21:11:37.663+02:00  INFO 25876 --- [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2023-11-06T21:11:37.714+02:00  INFO 25876 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-06T21:11:41.060+02:00 ERROR 25876 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.
 
 org.postgresql.util.PSQLException: The connection attempt failed.
 	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:354) ~[postgresql-42.6.0.jar:42.6.0]
@@ -351,7 +351,7 @@ Caused by: java.net.UnknownHostException: postgres
 	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:258) ~[postgresql-42.6.0.jar:42.6.0]
 	... 141 common frames omitted
 
-2023-11-06T19:51:05.055+02:00  WARN 12616 --- [    Test worker] o.h.e.j.e.i.JdbcEnvironmentInitiator     : HHH000342: Could not obtain connection to query metadata
+2023-11-06T21:11:41.084+02:00  WARN 25876 --- [    Test worker] o.h.e.j.e.i.JdbcEnvironmentInitiator     : HHH000342: Could not obtain connection to query metadata
 
 java.lang.NullPointerException: Cannot invoke "org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(java.sql.SQLException, String)" because the return value of "org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.sqlExceptionHelper()" is null
 	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:116) ~[hibernate-core-6.2.13.Final.jar:6.2.13.Final]
@@ -483,10 +483,10 @@ java.lang.NullPointerException: Cannot invoke "org.hibernate.engine.jdbc.spi.Sql
 	at worker.org.gradle.process.internal.worker.GradleWorkerMain.run(GradleWorkerMain.java:69) ~[gradle-worker.jar:na]
 	at worker.org.gradle.process.internal.worker.GradleWorkerMain.main(GradleWorkerMain.java:74) ~[gradle-worker.jar:na]
 
-2023-11-06T19:51:05.114+02:00  WARN 12616 --- [    Test worker] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2023-11-06T19:51:06.470+02:00  INFO 12616 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2023-11-06T19:51:06.494+02:00  INFO 12616 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2023-11-06T19:51:07.506+02:00 ERROR 12616 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.
+2023-11-06T21:11:41.128+02:00  WARN 25876 --- [    Test worker] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2023-11-06T21:11:42.423+02:00  INFO 25876 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2023-11-06T21:11:42.447+02:00  INFO 25876 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-06T21:11:43.459+02:00 ERROR 25876 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.
 
 org.postgresql.util.PSQLException: The connection attempt failed.
 	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:354) ~[postgresql-42.6.0.jar:42.6.0]
@@ -645,14 +645,14 @@ Caused by: java.net.UnknownHostException: postgres
 	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:258) ~[postgresql-42.6.0.jar:42.6.0]
 	... 145 common frames omitted
 
-2023-11-06T19:51:07.528+02:00  WARN 12616 --- [    Test worker] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 0, SQLState: 08001
-2023-11-06T19:51:07.529+02:00 ERROR 12616 --- [    Test worker] o.h.engine.jdbc.spi.SqlExceptionHelper   : The connection attempt failed.
-2023-11-06T19:51:07.537+02:00 ERROR 12616 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Failed to initialize JPA EntityManagerFactory: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to open JDBC Connection for DDL execution [The connection attempt failed.] [n/a]
-2023-11-06T19:51:07.539+02:00  WARN 12616 --- [    Test worker] o.s.w.c.s.GenericWebApplicationContext   : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to open JDBC Connection for DDL execution [The connection attempt failed.] [n/a]
-2023-11-06T19:51:07.550+02:00  INFO 12616 --- [    Test worker] .s.b.a.l.ConditionEvaluationReportLogger : 
+2023-11-06T21:11:43.484+02:00  WARN 25876 --- [    Test worker] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 0, SQLState: 08001
+2023-11-06T21:11:43.485+02:00 ERROR 25876 --- [    Test worker] o.h.engine.jdbc.spi.SqlExceptionHelper   : The connection attempt failed.
+2023-11-06T21:11:43.497+02:00 ERROR 25876 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Failed to initialize JPA EntityManagerFactory: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to open JDBC Connection for DDL execution [The connection attempt failed.] [n/a]
+2023-11-06T21:11:43.500+02:00  WARN 25876 --- [    Test worker] o.s.w.c.s.GenericWebApplicationContext   : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to open JDBC Connection for DDL execution [The connection attempt failed.] [n/a]
+2023-11-06T21:11:43.519+02:00  INFO 25876 --- [    Test worker] .s.b.a.l.ConditionEvaluationReportLogger : 
 
 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2023-11-06T19:51:07.576+02:00 ERROR 12616 --- [    Test worker] o.s.boot.SpringApplication               : Application run failed
+2023-11-06T21:11:43.551+02:00 ERROR 25876 --- [    Test worker] o.s.boot.SpringApplication               : Application run failed
 
 org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to open JDBC Connection for DDL execution [The connection attempt failed.] [n/a]
 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1770) ~[spring-beans-6.0.13.jar:6.0.13]
@@ -824,7 +824,7 @@ Caused by: java.net.UnknownHostException: postgres
 	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:258) ~[postgresql-42.6.0.jar:42.6.0]
 	... 145 common frames omitted
 
-2023-11-06T19:51:07.604+02:00 ERROR 12616 --- [    Test worker] o.s.test.context.TestContextManager      : Caught exception while allowing TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener] to prepare test instance [com.exam.ExamApplicationTests@34c6b52e]
+2023-11-06T21:11:43.577+02:00 ERROR 25876 --- [    Test worker] o.s.test.context.TestContextManager      : Caught exception while allowing TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener] to prepare test instance [com.exam.ExamApplicationTests@34c6b52e]
 
 java.lang.IllegalStateException: Failed to load ApplicationContext for [WebMergedContextConfiguration@4b8cde43 testClass = com.exam.ExamApplicationTests, locations = [], classes = [com.exam.ExamApplication], contextInitializerClasses = [], activeProfiles = [], propertySourceLocations = [], propertySourceProperties = ["org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true"], contextCustomizers = [org.springframework.boot.test.autoconfigure.actuate.observability.ObservabilityContextCustomizerFactory$DisableObservabilityContextCustomizer@1f, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizer@5aac4250, org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@7ca33c24, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@178213b, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@4af0df05, org.springframework.boot.test.context.SpringBootTestAnnotation@d6abe04d], resourceBasePath = "src/main/webapp", contextLoader = org.springframework.boot.test.context.SpringBootContextLoader, parent = null]
 	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:143) ~[spring-test-6.0.13.jar:6.0.13]
