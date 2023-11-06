@@ -17,6 +17,21 @@
             height: auto;  /* maintains the aspect ratio */
         }
 
+        /* Adjust image size on smaller screens (tablets) */
+        @media (max-width: 768px) {
+            .constrained-image {
+                max-width: 100%; /* allows the image to scale within its container */
+                max-height: 200px; /* adjust as needed */
+            }
+        }
+
+        /* Further adjustments for smartphone screens */
+        @media (max-width: 576px) {
+            .constrained-image {
+                max-height: 150px; /* smaller height for smaller screens */
+            }
+        }
+
         .button-container {
             display: flex;
             justify-content: center; /* Align buttons to the center */
