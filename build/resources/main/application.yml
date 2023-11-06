@@ -1,0 +1,37 @@
+server:
+  port: 8181
+
+spring:
+  mvc:
+    static-path-pattern: /static/**
+  servlet:
+    multipart:
+      max-file-size: 128MB
+      max-request-size: 128MB
+  thymeleaf:
+    cache: false
+
+  datasource:
+    url: jdbc:postgresql://postgres:5432/exam_db
+    username: postgres
+    password: postgres
+
+#  datasource:
+#    url: jdbc:postgresql://localhost:5435/exam_db
+#    username: postgres
+#    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: public
+    show-sql: false
+  # Define the directory path
+  web:
+    resources:
+      static-locations:
+        - classpath:/static/
+        - file:/app/uploads/

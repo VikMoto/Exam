@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Home</title>
+
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <!-- Optional: Bootstrap JS, Popper.js for features like dropdowns, modals, etc. -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" integrity="sha384-eMNCOe7tC1do4A+gf8k4lPXAz5wr+X4Ck4SOF4y4Ck4C2DgHfViXydVeLm+JDMZD" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+Wy4Ck4SOF4y4Ck4C2DgHfViXydVeLm+JDM" crossorigin="anonymous"></script>
+    <style>
+        html, body {
+            height: 100%;
+        }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 400px; /* Or any other max-width you prefer */
+        }
+        .form-control, .btn-primary {
+            width: 100%; /* Makes the input and button take up 100% of their parent's width */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container d-flex align-items-center justify-content-center vh-100">
+    <div class="w-100">
+        <h2 class="text-center mb-4">Реєстрація студента</h2>
+        <form th:action="@{/exam/register}" method="post">
+            <div class="form-group">
+                <input type="text" class="form-control" name="firstName" placeholder="Введіть ім'я">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" name="lastName" placeholder="Введіть прізвищее">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">Далі</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
