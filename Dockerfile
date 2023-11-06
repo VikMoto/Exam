@@ -14,4 +14,3 @@ RUN chmod +x wait-for-it.sh
 
 # Command to wait for Postgres and run the Spring Boot app
 CMD ["./wait-for-it.sh", "postgres", "5432", "--", "java", "-jar", "app.jar"]
-
