@@ -68,6 +68,14 @@
             align-items: center;
             justify-content: center;
         }
+        .form-check-label {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-check-input {
+            margin-right: 10px; /* Adjust as needed */
+        }
 
 
     </style>
@@ -109,12 +117,13 @@
                             <!-- Display choices for the current question -->
                             <th:block th:each="answer : ${question.answers}">
                                 <div class="form-check">
-                                    <label>
+                                    <label class="form-check-label">
                                         <input class="form-check-input" type="checkbox" th:value="${answer.id}" th:name="${'answerForQuestion_' + question.id}">
+                                        <span th:text="${answer.content}">Example Answer</span>
                                     </label>
-                                    <label class="form-check-label" th:text="${answer.content}"></label>
                                 </div>
                             </th:block>
+
                         </fieldset>
 
                         <!-- Bottom buttons: -->
@@ -129,7 +138,7 @@
                             </div>
                             <div th:if="${isLastQuestion}">
                                 <!-- The End Test button has type 'button' so it doesn't submit the form by default -->
-                                <button id="end-test-btn" type="button" class="btn btn-danger">Тестування завершено</button>
+                                <button id="end-test-btn" type="button" class="btn btn-danger">Завершити тестування</button>
                             </div>
                         </div>
 
@@ -152,7 +161,7 @@
         let checkboxes = document.querySelectorAll('input[type="checkbox"]');
         let checkedOne = Array.prototype.slice.call(checkboxes).some(x => x.checked);
         if (!checkedOne) {
-            alert('Please select at least one answer before proceeding.');
+            alert('Будь ласка, оберіть принаймні одну відповідь.');
             e.preventDefault(); // Prevent form submission
         }
     });
