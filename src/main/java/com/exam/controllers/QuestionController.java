@@ -181,17 +181,46 @@ public class QuestionController {
     }
 
     @PostMapping("/update-card/{cardId}")
-    public String handleCardUpdate(@PathVariable Long cardId, @ModelAttribute Card card) {
-
-        System.out.println("card = " + card);
+    public String handleCardUpdate(@PathVariable Long cardId,
+                                   @ModelAttribute Card card,
+                                   @RequestParam Map<String, String> params) {
         if (!cardService.existsById(cardId)) {
-            throw new RuntimeException("Card not found!");  // or handle this in a more graceful manner
+            throw new RuntimeException("Card not found!");
         }
 
-        card.setId(cardId);  // ensure the card has the right ID to update the correct record
-        cardService.saveCard(card);  // save the updated card
+        // Fetch the existing card and update its details
+        Card existingCard = cardService.getCardById(cardId).orElseThrow();
+        existingCard.setName(card.getName());
 
-        return "redirect:/teacher/manage-cards";  // redirect to the manage cards page after updating
+        // Iterate over each question in the card
+        for (Question question : existingCard.getQuestions()) {
+            String questionContent = params.get("question_" + question.getId());
+            if (questionContent != null) {
+                question.setContent(questionContent);
+            }
+
+            // Iterate over each answer in the question
+            for (Answer answer : question.getAnswers()) {
+                String answerContent = params.get("answer_" + answer.getId());
+                if (answerContent != null) {
+                    answer.setContent(answerContent);
+                }
+
+                String isCorrect = params.get("isCorrect_" + answer.getId());
+                answer.setCorrect("on".equals(isCorrect));
+
+                // Save the updated answer
+                answerService.saveAnswer(answer);
+            }
+
+            // Save the updated question
+            questionService.saveQuestion(question);
+        }
+
+        // Save the updated card
+        cardService.saveCard(existingCard);
+
+        return "redirect:/teacher/manage-cards";
     }
 
 
