@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.005s</div>
+<div class="counter">0.004s</div>
 <p>duration</p>
 </div>
 </td>
@@ -267,7 +267,7 @@ Caused by: java.net.UnknownHostException: postgres
 </thead>
 <tr>
 <td class="failures">contextLoads()</td>
-<td class="failures">0.005s</td>
+<td class="failures">0.004s</td>
 <td class="failures">failed</td>
 </tr>
 </table>
@@ -275,8 +275,8 @@ Caused by: java.net.UnknownHostException: postgres
 <div id="tab2" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>17:40:21.952 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.exam.ExamApplicationTests]: ExamApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-17:40:22.077 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.exam.ExamApplication for test class com.exam.ExamApplicationTests
+<pre>18:06:18.495 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.exam.ExamApplicationTests]: ExamApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+18:06:18.631 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.exam.ExamApplication for test class com.exam.ExamApplicationTests
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -286,16 +286,16 @@ Caused by: java.net.UnknownHostException: postgres
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v3.1.5)
 
-2023-11-07T17:40:22.670+02:00  INFO 26604 --- [    Test worker] com.exam.ExamApplicationTests            : Starting ExamApplicationTests using Java 17.0.6 with PID 26604 (started by adifi in E:\HOME\ELECTRO\Exam)
-2023-11-07T17:40:22.671+02:00  INFO 26604 --- [    Test worker] com.exam.ExamApplicationTests            : No active profile set, falling back to 1 default profile: &quot;default&quot;
-2023-11-07T17:40:23.571+02:00  INFO 26604 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2023-11-07T17:40:23.651+02:00  INFO 26604 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 70 ms. Found 4 JPA repository interfaces.
-2023-11-07T17:40:24.370+02:00  INFO 26604 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2023-11-07T17:40:24.457+02:00  INFO 26604 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.2.13.Final
-2023-11-07T17:40:24.460+02:00  INFO 26604 --- [    Test worker] org.hibernate.cfg.Environment            : HHH000406: Using bytecode reflection optimizer
-2023-11-07T17:40:24.865+02:00  INFO 26604 --- [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2023-11-07T17:40:24.902+02:00  INFO 26604 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2023-11-07T17:40:28.267+02:00 ERROR 26604 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.
+2023-11-08T18:06:19.258+02:00  INFO 12748 --- [    Test worker] com.exam.ExamApplicationTests            : Starting ExamApplicationTests using Java 17.0.6 with PID 12748 (started by adifi in E:\HOME\ELECTRO\Exam)
+2023-11-08T18:06:19.260+02:00  INFO 12748 --- [    Test worker] com.exam.ExamApplicationTests            : No active profile set, falling back to 1 default profile: &quot;default&quot;
+2023-11-08T18:06:20.169+02:00  INFO 12748 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-11-08T18:06:20.274+02:00  INFO 12748 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 93 ms. Found 4 JPA repository interfaces.
+2023-11-08T18:06:21.063+02:00  INFO 12748 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-11-08T18:06:21.154+02:00  INFO 12748 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.2.13.Final
+2023-11-08T18:06:21.158+02:00  INFO 12748 --- [    Test worker] org.hibernate.cfg.Environment            : HHH000406: Using bytecode reflection optimizer
+2023-11-08T18:06:21.565+02:00  INFO 12748 --- [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2023-11-08T18:06:21.607+02:00  INFO 12748 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-08T18:06:24.979+02:00 ERROR 12748 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.
 
 org.postgresql.util.PSQLException: The connection attempt failed.
 	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:354) ~[postgresql-42.6.0.jar:42.6.0]
@@ -450,7 +450,7 @@ Caused by: java.net.UnknownHostException: postgres
 	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:258) ~[postgresql-42.6.0.jar:42.6.0]
 	... 141 common frames omitted
 
-2023-11-07T17:40:28.302+02:00  WARN 26604 --- [    Test worker] o.h.e.j.e.i.JdbcEnvironmentInitiator     : HHH000342: Could not obtain connection to query metadata
+2023-11-08T18:06:25.009+02:00  WARN 12748 --- [    Test worker] o.h.e.j.e.i.JdbcEnvironmentInitiator     : HHH000342: Could not obtain connection to query metadata
 
 java.lang.NullPointerException: Cannot invoke &quot;org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(java.sql.SQLException, String)&quot; because the return value of &quot;org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.sqlExceptionHelper()&quot; is null
 	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:116) ~[hibernate-core-6.2.13.Final.jar:6.2.13.Final]
@@ -582,10 +582,10 @@ java.lang.NullPointerException: Cannot invoke &quot;org.hibernate.engine.jdbc.sp
 	at worker.org.gradle.process.internal.worker.GradleWorkerMain.run(GradleWorkerMain.java:69) ~[gradle-worker.jar:na]
 	at worker.org.gradle.process.internal.worker.GradleWorkerMain.main(GradleWorkerMain.java:74) ~[gradle-worker.jar:na]
 
-2023-11-07T17:40:28.349+02:00  WARN 26604 --- [    Test worker] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2023-11-07T17:40:29.635+02:00  INFO 26604 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2023-11-07T17:40:29.658+02:00  INFO 26604 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2023-11-07T17:40:30.674+02:00 ERROR 26604 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.
+2023-11-08T18:06:25.060+02:00  WARN 12748 --- [    Test worker] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2023-11-08T18:06:26.396+02:00  INFO 12748 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2023-11-08T18:06:26.421+02:00  INFO 12748 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-11-08T18:06:27.430+02:00 ERROR 12748 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.
 
 org.postgresql.util.PSQLException: The connection attempt failed.
 	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:354) ~[postgresql-42.6.0.jar:42.6.0]
@@ -744,14 +744,14 @@ Caused by: java.net.UnknownHostException: postgres
 	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:258) ~[postgresql-42.6.0.jar:42.6.0]
 	... 145 common frames omitted
 
-2023-11-07T17:40:30.694+02:00  WARN 26604 --- [    Test worker] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 0, SQLState: 08001
-2023-11-07T17:40:30.694+02:00 ERROR 26604 --- [    Test worker] o.h.engine.jdbc.spi.SqlExceptionHelper   : The connection attempt failed.
-2023-11-07T17:40:30.702+02:00 ERROR 26604 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Failed to initialize JPA EntityManagerFactory: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to open JDBC Connection for DDL execution [The connection attempt failed.] [n/a]
-2023-11-07T17:40:30.704+02:00  WARN 26604 --- [    Test worker] o.s.w.c.s.GenericWebApplicationContext   : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to open JDBC Connection for DDL execution [The connection attempt failed.] [n/a]
-2023-11-07T17:40:30.716+02:00  INFO 26604 --- [    Test worker] .s.b.a.l.ConditionEvaluationReportLogger : 
+2023-11-08T18:06:27.476+02:00  WARN 12748 --- [    Test worker] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 0, SQLState: 08001
+2023-11-08T18:06:27.476+02:00 ERROR 12748 --- [    Test worker] o.h.engine.jdbc.spi.SqlExceptionHelper   : The connection attempt failed.
+2023-11-08T18:06:27.484+02:00 ERROR 12748 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Failed to initialize JPA EntityManagerFactory: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to open JDBC Connection for DDL execution [The connection attempt failed.] [n/a]
+2023-11-08T18:06:27.485+02:00  WARN 12748 --- [    Test worker] o.s.w.c.s.GenericWebApplicationContext   : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to open JDBC Connection for DDL execution [The connection attempt failed.] [n/a]
+2023-11-08T18:06:27.495+02:00  INFO 12748 --- [    Test worker] .s.b.a.l.ConditionEvaluationReportLogger : 
 
 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2023-11-07T17:40:30.746+02:00 ERROR 26604 --- [    Test worker] o.s.boot.SpringApplication               : Application run failed
+2023-11-08T18:06:27.520+02:00 ERROR 12748 --- [    Test worker] o.s.boot.SpringApplication               : Application run failed
 
 org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to open JDBC Connection for DDL execution [The connection attempt failed.] [n/a]
 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1770) ~[spring-beans-6.0.13.jar:6.0.13]
@@ -923,7 +923,7 @@ Caused by: java.net.UnknownHostException: postgres
 	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:258) ~[postgresql-42.6.0.jar:42.6.0]
 	... 145 common frames omitted
 
-2023-11-07T17:40:30.770+02:00 ERROR 26604 --- [    Test worker] o.s.test.context.TestContextManager      : Caught exception while allowing TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener] to prepare test instance [com.exam.ExamApplicationTests@34c6b52e]
+2023-11-08T18:06:27.538+02:00 ERROR 12748 --- [    Test worker] o.s.test.context.TestContextManager      : Caught exception while allowing TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener] to prepare test instance [com.exam.ExamApplicationTests@34c6b52e]
 
 java.lang.IllegalStateException: Failed to load ApplicationContext for [WebMergedContextConfiguration@4b8cde43 testClass = com.exam.ExamApplicationTests, locations = [], classes = [com.exam.ExamApplication], contextInitializerClasses = [], activeProfiles = [], propertySourceLocations = [], propertySourceProperties = [&quot;org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true&quot;], contextCustomizers = [org.springframework.boot.test.autoconfigure.actuate.observability.ObservabilityContextCustomizerFactory$DisableObservabilityContextCustomizer@1f, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizer@5aac4250, org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@7ca33c24, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@178213b, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@4af0df05, org.springframework.boot.test.context.SpringBootTestAnnotation@d6abe04d], resourceBasePath = &quot;src/main/webapp&quot;, contextLoader = org.springframework.boot.test.context.SpringBootContextLoader, parent = null]
 	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:143) ~[spring-test-6.0.13.jar:6.0.13]
@@ -1148,7 +1148,7 @@ Unconditional classes:
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 8.3</a> at Nov 7, 2023, 5:40:31 PM</p>
+<a href="http://www.gradle.org">Gradle 8.3</a> at Nov 8, 2023, 6:06:27 PM</p>
 </div>
 </div>
 </body>
