@@ -1,16 +1,16 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres
-    container_name: Exam_DB
-    environment:
-      POSTGRES_DB: exam_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
+#  postgres:
+#    image: postgres
+#    container_name: Exam_DB
+#    environment:
+#      POSTGRES_DB: exam_db
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: postgres
+#    ports:
 #            - "5435:5432"
-      - "5432:5432"
+#      - "5432:5432"
 
   app:
     build: .
