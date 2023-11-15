@@ -6,8 +6,8 @@ services:
     container_name: Exam_DB
     environment:
       POSTGRES_DB: exam_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: teach1
+      POSTGRES_PASSWORD: donetoNTC
     ports:
 #            - "5435:5432"
       - "5432:5432"
@@ -21,7 +21,8 @@ services:
       - "8181:8181"
     volumes:
       - uploads_volume:/app/uploads/
-    command: ["./wait-for-it.sh", "postgres:5432", "--", "java", "-jar", "app.jar"]
+    command: [ "java", "-jar", "app.jar"]
+#    command: ["./wait-for-it.sh", "postgres:5432", "--", "java", "-jar", "app.jar"]
 
 volumes:
   uploads_volume:
