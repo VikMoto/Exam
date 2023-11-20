@@ -30,7 +30,8 @@ public class SecurityConfiguration {
                 "/exam/**",
                 "/uploads/**",
                 "/static/images/**",
-                 "/app/uploads/**"
+                 "/app/uploads/**",
+                 "/root/images/**"
         )
           .permitAll()
         .anyRequest()

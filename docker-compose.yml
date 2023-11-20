@@ -3,13 +3,14 @@ version: '3.8'
 services:
   postgres:
     image: postgres
+    restart: unless-stopped
     container_name: Exam_DB
     environment:
       POSTGRES_DB: exam_db
       POSTGRES_USER: teach1
       POSTGRES_PASSWORD: donetoNTC
     ports:
-#            - "5435:5432"
+      #            - "5435:5432"
       - "5432:5432"
 
   app:

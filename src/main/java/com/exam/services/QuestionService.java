@@ -7,7 +7,10 @@ import com.exam.repo.AnswerRepository;
 import com.exam.repo.QuestionRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionService {
@@ -36,7 +39,16 @@ public class QuestionService {
     }
 
     public Question getQuestionById(Long questionId) {
-        return questionRepository.findById(questionId).orElseThrow();
+
+        Question question = questionRepository.findById(questionId).orElseThrow();
+        List<Answer> sortedAnswers = question.getAnswers()
+                .stream()
+                .sorted(Comparator.comparing(Answer::getId))
+                .toList();
+        // Now set the sorted list back to the question
+        question.setAnswers(sortedAnswers);
+
+        return question;
     }
 
 

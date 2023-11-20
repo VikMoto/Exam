@@ -12,8 +12,8 @@ spring:
     cache: false
 
   datasource:
-    url: jdbc:postgresql://postgres:5432/exam_db
-    username: teach1
+    url: jdbc:postgresql://185.25.116.203:5433/exam_db
+    username: postgres
     password: donetoNTC
 
 #  datasource:
