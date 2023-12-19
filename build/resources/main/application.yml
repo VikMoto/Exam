@@ -17,10 +17,9 @@ spring:
     password: donetoNTC
 
 #  datasource:
-#    url: jdbc:postgresql://localhost:5432/exam_db
-#    username: postgres
+#    url: jdbc:postgresql://postgres:5432/exam_db
+#    username: teach1
 #    password: donetoNTC
-
 
 #  datasource:
 #    url: jdbc:postgresql://localhost:5435/exam_db
@@ -29,7 +28,7 @@ spring:
 
 
 
-jpa:
+  jpa:
     hibernate:
       ddl-auto: update
     properties:
@@ -38,7 +37,7 @@ jpa:
         default_schema: public
     show-sql: false
   # Define the directory path
-web:
+  web:
     resources:
       static-locations:
         - classpath:/static/
