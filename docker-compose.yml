@@ -1,23 +1,23 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres
-    restart: unless-stopped
-    container_name: Exam_DB
-    environment:
-      POSTGRES_DB: exam_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: donetoNTC
-    ports:
-      #            - "5435:5432"
-      - "5432:5432"
+#  postgres:
+#    image: postgres
+#    restart: unless-stopped
+#    container_name: Exam_DB
+#    environment:
+#      POSTGRES_DB: exam_db
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: donetoNTC
+#    ports:
+#      #            - "5435:5432"
+#      - "5432:5432"
 
   app:
     build: .
     container_name: Exam_App
-    #    depends_on:
-    #      - postgres
+#    depends_on:
+#      - postgres
     ports:
       - "8181:8181"
     volumes:
