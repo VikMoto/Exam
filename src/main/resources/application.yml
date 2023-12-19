@@ -11,15 +11,15 @@ spring:
   thymeleaf:
     cache: false
 
+#  datasource:
+#    url: jdbc:postgresql://185.67.3.149:5432/exam_db
+#    username: postgres
+#    password: donetoNTC
+
   datasource:
-    url: jdbc:postgresql://185.67.3.149:5432/exam_db
+    url: jdbc:postgresql://localhost:5432/exam_db
     username: postgres
     password: donetoNTC
-
-# datasource:
-#   url: jdbc:postgresql://localhost:5432/exam_db
-#   username: postgres
-#   password: donetoNTC
 
 
 #  datasource:
@@ -29,7 +29,7 @@ spring:
 
 
 
-  jpa:
+jpa:
     hibernate:
       ddl-auto: update
     properties:
@@ -38,7 +38,7 @@ spring:
         default_schema: public
     show-sql: false
   # Define the directory path
-  web:
+web:
     resources:
       static-locations:
         - classpath:/static/
