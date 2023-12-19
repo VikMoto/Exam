@@ -113,7 +113,6 @@
                         <input type="hidden" th:value="${currentCard.id}" name="currentCardId">
 
                         <fieldset class="form-group">
-<!--                            <legend th:text="${question.content}"></legend>-->
                             <!-- Display choices for the current question -->
                             <th:block th:each="answer : ${question.answers}">
                                 <div class="form-check">
@@ -125,6 +124,7 @@
                             </th:block>
 
                         </fieldset>
+
 
                         <!-- Bottom buttons: -->
                         <div class="button-container mt-3">

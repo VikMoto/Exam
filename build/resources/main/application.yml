@@ -11,15 +11,15 @@ spring:
   thymeleaf:
     cache: false
 
-#  datasource:
-#    url: jdbc:postgresql://185.25.116.203:5433/exam_db
-#    username: postgres
-#    password: donetoNTC
-
   datasource:
-    url: jdbc:postgresql://postgres:5432/exam_db
-    username: teach1
+    url: jdbc:postgresql://185.25.116.203:5433/exam_db
+    username: postgres
     password: donetoNTC
+
+#  datasource:
+#    url: jdbc:postgresql://postgres:5432/exam_db
+#    username: teach1
+#    password: donetoNTC
 
 #  datasource:
 #    url: jdbc:postgresql://localhost:5435/exam_db
