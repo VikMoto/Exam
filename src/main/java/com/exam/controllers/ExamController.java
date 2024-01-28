@@ -40,7 +40,6 @@ public class ExamController {
         examService.saveUser(user);
         examService.initializeUnansweredQuestionsForUser(user);
         model.addAttribute("user", user);
-
         return "step3";
     }
 
@@ -48,18 +47,16 @@ public class ExamController {
     @GetMapping("/start")
     public String startExam(Model model) {
         User currentUser = examService.getLatestRegisteredUser();
-
         Question firstQuestion = currentUser.getUnansweredQuestions().isEmpty() ? null : currentUser.getUnansweredQuestions().get(0);
         if (firstQuestion == null) {
             // No more unanswered questions for this user
             // You might want to redirect the user to another page or show a message
             return "someOtherView"; // replace this with a valid view or redirect logic
         }
-//        boolean isFirstQuestion = true;
+
         boolean isLastQuestion = currentUser.getUnansweredQuestions().indexOf(firstQuestion) == currentUser.getUnansweredQuestions().size() - 1;
          setModelAttributes(model, currentUser, firstQuestion);
         model.addAttribute("isLastQuestion", isLastQuestion);
-//        model.addAttribute("isFirstQuestion", isFirstQuestion);
          return "step4";
     }
 
@@ -83,7 +80,6 @@ public class ExamController {
             model.addAttribute("message", "You are already at the first question.");
             model.addAttribute("isLastQuestion", Boolean.FALSE);
             setModelAttributes(model, currentUser, currentQuestion); // Re-set attributes if needed
-//            model.addAttribute("isFirstQuestion", isFirstQuestion);
             return "step4"; // assuming "step4" is the view for displaying questions
         }
 
@@ -94,44 +90,29 @@ public class ExamController {
 
         // Update the currentQuestionId for the user
         updateCurrentQuestionId(currentUser, previousQuestion.getId());
-//        boolean isFirstQuestion = currentUser.getUnansweredQuestions().indexOf(previousQuestion) == 0;
         boolean isLastQuestion = currentUser.getUnansweredQuestions().indexOf(previousQuestion) == currentUser.getUnansweredQuestions().size() - 1;
         // Set attributes for the model
         setModelAttributes(model, currentUser, previousQuestion);
         model.addAttribute("isLastQuestion", isLastQuestion);
-//        model.addAttribute("isFirstQuestion", isFirstQuestion);
         return "step4";
     }
 
     @GetMapping("/next")
     public String goNext(@RequestParam Long userId, Model model) {
         User currentUser = examService.getUserById(userId);
-//        List<Long> longList = currentUser.getUnansweredQuestions().stream().map(Question::getId).toList();
-//        System.out.println("longList = " + longList);
         Question currentQuestion = getCurrentQuestionFromUserInput(currentUser); // You need to implement this
-
         if (currentQuestion == null) {
             // Handle this case - maybe this is the start of the exam or an error state
         }
 
         Question nextQuestion = examService.getNextUnansweredQuestion(currentUser, currentQuestion);
-//        System.out.println("nextQuestion.getId() = " + nextQuestion.getId());
         boolean isLastQuestion = currentUser.getUnansweredQuestions().indexOf(nextQuestion) == currentUser.getUnansweredQuestions().size() - 1;
 
         if (nextQuestion == null) {
-            // If there's no next question, this could be the last question that was answered.
-            // You may need to implement getPreviousUnansweredQuestion similar to getNextUnansweredQuestion
-//            Question previousQuestion = examService.getPreviousUnansweredQuestion(currentUser, currentQuestion);
-//            if (previousQuestion != null) {
-            // Go back to the previous unanswered question if it exists
-//                updateCurrentQuestionId(currentUser, previousQuestion.getId());
-                setModelAttributes(model, currentUser, currentQuestion);
+            setModelAttributes(model, currentUser, currentQuestion);
             model.addAttribute("isLastQuestion", true); // It's not the last question since we went back
             return "step4"; // Or whatever view you use for displaying the question
         }
-
-        // Check if this is the last unanswered question
-//        boolean isFirstQuestion = currentUser.getUnansweredQuestions().indexOf(nextQuestion) == 0;
 
         // Update the currentQuestionId for the user
         updateCurrentQuestionId(currentUser, nextQuestion.getId());
@@ -139,7 +120,6 @@ public class ExamController {
         // Set attributes for the model
         setModelAttributes(model, currentUser, nextQuestion);
         model.addAttribute("isLastQuestion", isLastQuestion);
-//        model.addAttribute("isFirstQuestion", isFirstQuestion);
         return "step4";
     }
 
@@ -155,9 +135,7 @@ public class ExamController {
 
 
     private void setModelAttributes(Model model, User currentUser, Question question) {
-
         Card currentCard = examService.getCardByQuestionId(question.getId());
-
         model.addAttribute("question", question);
         model.addAttribute("user", currentUser);
         model.addAttribute("currentCard", currentCard);
@@ -231,25 +209,11 @@ public class ExamController {
     public String endTest(@RequestParam Long userId, Model model) {
         // This method could also perform any necessary actions before ending the test
         // such as logging the end of the test, updating the user's status, etc.
-
         // Perform any required clean-up or saving operations before ending the test
-//        finalizeTestForUser(userId);
-
         // Redirect to the result page
         return "redirect:/exam/result/" + userId;
     }
 
-//    @PostMapping("/endTest")
-//    public String endTest(@RequestParam Long userId, Model model) {
-//        // This method could also perform any necessary actions before ending the test
-//        // such as logging the end of the test, updating the user's status, etc.
-//
-//        // Perform any required clean-up or saving operations before ending the test
-////        finalizeTestForUser(userId);
-//
-//        // Redirect to the result page
-//        return "redirect:/exam/result/" + userId;
-//    }
 
     private void updateCurrentQuestionId(User currentUser, Long nextQuestion) {
         currentUser.setCurrentQuestionId(nextQuestion);  // Setting the user's current question ID
@@ -267,7 +231,6 @@ public class ExamController {
 
         int score = examService.getScoreByUserId(userId);
         String rating = determineRating(score);
-
         model.addAttribute("user", user);  // <-- This is the missing part
         model.addAttribute("score", score);
         model.addAttribute("rating", rating);

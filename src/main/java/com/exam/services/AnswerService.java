@@ -3,10 +3,12 @@ package com.exam.services;
 import com.exam.models.Answer;
 import com.exam.repo.AnswerRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
+@Transactional
 public class AnswerService {
     private final AnswerRepository answerRepository;
 

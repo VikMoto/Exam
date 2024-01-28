@@ -9,25 +9,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
-
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
+@Transactional
 public class ExamService {
 
     private final UserRepository userRepository;
-
     private final CardRepository cardRepository;
-
-
     private final QuestionRepository questionRepository;
-
-
     private final AnswerRepository answerRepository;
     private final CardService cardService;
 
@@ -125,44 +119,6 @@ public class ExamService {
         userRepository.save(user);
     }
 
-
-//    public Question getNextUnansweredQuestion(User user, Question currentQuestion) {
-//        List<Question> unansweredQuestions = user.getUnansweredQuestions();
-//        Long currentQuestionId = currentQuestion.getId();
-//
-//        System.out.println("currentQuestionId = in getNextUnansweredQuestion " + currentQuestionId);
-//
-//        // If the currentQuestionId is not in the list of unanswered questions,
-//        // assume the next question in the list should be returned.
-//        if (!unansweredQuestions.stream().anyMatch(q -> q.getId().equals(currentQuestionId))) {
-//            if (!unansweredQuestions.isEmpty()) {
-//                // Just get the first unanswered question
-//                return unansweredQuestions.get(0);
-//            }
-//            // If there are no unanswered questions left, return null
-//            return null;
-//        }
-//
-//        // If the currentQuestionId is found in the list,
-//        // proceed to get the next question after it
-//        int currentIndex = -1;
-//        for (int i = 0; i < unansweredQuestions.size(); i++) {
-//            if (unansweredQuestions.get(i).getId().equals(currentQuestionId)) {
-//                currentIndex = i;
-//                break;
-//            }
-//        }
-//
-//        System.out.println("currentIndex = " + currentIndex);
-//
-//        // Get the next question if it exists
-//        if (currentIndex != -1 && currentIndex < unansweredQuestions.size() - 1) {
-//            return unansweredQuestions.get(currentIndex + 1);
-//        }
-//
-//        // If there are no more unanswered questions, return null
-//        return null;
-//    }
 
     public Question getNextUnansweredQuestion(User user, Question currentQuestion) {
         List<Question> unansweredQuestions = user.getUnansweredQuestions();
@@ -309,8 +265,6 @@ public class ExamService {
     public boolean isAnswerCorrect(Long questionId, String submittedAnswer) {
         // Fetch all the correct answers for the given question from the database
         List<Answer> correctAnswers = answerRepository.findByQuestionIdAndIsCorrectTrue(questionId);
-//        System.out.println("correctAnswers = " + correctAnswers);
-//        System.out.println("submittedAnswer = " + submittedAnswer);
         // Check if the submittedAnswer matches any of the correct answers for the given question
         for (Answer correctAnswer : correctAnswers) {
             if (correctAnswer.getId()== Long.parseLong(submittedAnswer)) {
