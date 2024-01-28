@@ -10,8 +10,6 @@ public class QuestionDTO {
     private List<String> answers = new ArrayList<>();
     private List<Boolean> isCorrect = new ArrayList<>();
 
-    // getters, setters, etc.
-
     public void addAnswer(String answer) {
         answers.add(answer);
     }

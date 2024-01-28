@@ -12,6 +12,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -75,9 +78,6 @@ public class QuestionController {
                                                   @RequestParam Map<String, String> params,
                                                   @RequestParam(name = "imageFile", required = false) MultipartFile imageFile) {
         Card currentCard = cardService.getCardById(cardId).orElseThrow();
-
-        // ... (rest of the logic remains same as your existing handleQuestionSubmission method)
-
         return "redirect:/teacher/add-question/" + cardId;  // Redirect back to the add-question for the same card
     }
 
@@ -105,19 +105,9 @@ public class QuestionController {
         question.setContent(questionDto.getContent());
 
         try {
-            if (imageFile != null && !imageFile.isEmpty()) {
-                // Change the directory path to the path mapped to the Docker volume
-                Path uploadDir = Paths.get("/app/uploads/");
-                if (!Files.exists(uploadDir)) {
-                    Files.createDirectories(uploadDir);
-                }
-                Path imagePath = uploadDir.resolve(Objects.requireNonNull(imageFile.getOriginalFilename()));
-                Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
-                question.setImagePath("/uploads/" + imageFile.getOriginalFilename());
-            }
+            handleImageFileUpload(imageFile, question);
         } catch (Exception e) {
-            e.printStackTrace();
-            // Here, you might also log the error or notify the user about the failure.
+            return String.valueOf(handleException(e));
         }
 
 
@@ -147,6 +137,29 @@ public class QuestionController {
 
         return "redirect:/teacher/add-question";
     }
+
+    private void handleImageFileUpload(MultipartFile imageFile, Question question) throws IOException {
+        if (imageFile != null && !imageFile.isEmpty()) {
+            // Change the directory path to the path mapped to the Docker volume
+            Path uploadDir = Paths.get("/app/uploads/");
+            if (!Files.exists(uploadDir)) {
+                Files.createDirectories(uploadDir);
+            }
+            Path imagePath = uploadDir.resolve(Objects.requireNonNull(imageFile.getOriginalFilename()));
+            Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
+            question.setImagePath("/uploads/" + imageFile.getOriginalFilename());
+        }
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleException(Exception e) {
+        e.printStackTrace();
+        // Here, might also log the error or notify the user about the failure.
+        ModelAndView modelAndView = new ModelAndView("error");
+        modelAndView.addObject("errorMessage", "An error occurred while processing your request.");
+        return modelAndView;
+    }
+
 
     @GetMapping("/add-card")
     public String showAddCardForm(Model model) {

@@ -6,6 +6,7 @@ import com.exam.models.Question;
 import com.exam.repo.AnswerRepository;
 import com.exam.repo.QuestionRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class QuestionService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
@@ -28,7 +30,6 @@ public class QuestionService {
         // Iterate through the answers and set their associated question
         for (Answer answer : question.getAnswers()) {
             answer.setQuestion(savedQuestion);
-//            System.out.println("answer = " + answer);
             answerRepository.save(answer); // Persist each answer to the database
         }
         System.out.println("Saving question: " + question.getContent());
