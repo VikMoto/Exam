@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/exam")
 public class ExamController {
-
     private final ExamService examService;
     private final CardService cardService;
     private final QuestionService questionService;
@@ -113,10 +112,8 @@ public class ExamController {
             model.addAttribute("isLastQuestion", true); // It's not the last question since we went back
             return "step4"; // Or whatever view you use for displaying the question
         }
-
         // Update the currentQuestionId for the user
         updateCurrentQuestionId(currentUser, nextQuestion.getId());
-
         // Set attributes for the model
         setModelAttributes(model, currentUser, nextQuestion);
         model.addAttribute("isLastQuestion", isLastQuestion);
@@ -128,7 +125,6 @@ public class ExamController {
             // No current question is set, return null or handle accordingly
             return null;
         }
-
         // Assuming there is a service or repository method to find a question by its ID
         return questionService.getQuestionById(user.getCurrentQuestionId());
     }
@@ -149,20 +145,15 @@ public class ExamController {
     public String submitAnswer(@RequestParam Long userId,
                                @RequestParam MultiValueMap<String, String> allRequestParams,
                                Model model) {
-
         User currentUser = examService.getUserById(userId);
         String action = allRequestParams.getFirst("action");
-
         if ("Back".equals(action)) return goBack(userId, model);
         if ("Next".equals(action)) return goNext(userId, model);
         if ("End Test".equals(action)) return endTest(userId, model);
-
         // Process answers before finding the next question
         examService.processUserAnswers(allRequestParams, currentUser);
-
 //        // Get the current question based on the currentQuestionId of the user
         Question currentQuestion = getCurrentQuestionFromUserInput(currentUser);
-
         System.out.println("currentQuestion.getId() in submit = " + currentQuestion.getId());
         List<Long> longList = currentUser.getUnansweredQuestions().stream().map(Question::getId).toList();
         System.out.println("questId in submit  = " + longList);
@@ -170,7 +161,6 @@ public class ExamController {
 
         // Get the next question using the current question
         Question nextQuestion = examService.getNextUnansweredQuestion(currentUser, currentQuestion);
-
 
         if (nextQuestion == null) {
             // If there's no next question, this could be the last question that was answered.
@@ -194,7 +184,6 @@ public class ExamController {
         boolean isLastQuestion = currentUser.getUnansweredQuestions().indexOf(nextQuestion) == currentUser.getUnansweredQuestions().size() - 1;
         setModelAttributes(model, currentUser, nextQuestion);
         model.addAttribute("isLastQuestion", isLastQuestion);
-
         return "step4";
     }
 
@@ -228,13 +217,11 @@ public class ExamController {
             // handle the case where the user is not found
             return "errorPage"; // replace with your error page/view
         }
-
         int score = examService.getScoreByUserId(userId);
         String rating = determineRating(score);
         model.addAttribute("user", user);  // <-- This is the missing part
         model.addAttribute("score", score);
         model.addAttribute("rating", rating);
-
         return "step17";
     }
 
@@ -254,7 +241,6 @@ public class ExamController {
         if (score == 0) return "0";
         return "Invalid Score"; // This is just to handle any scores that might fall outside the ranges provided.
     }
-
 }
 
 

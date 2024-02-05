@@ -21,9 +21,7 @@ public class User {
     private Long id;
     private String firstName;
     private String lastName;
-
     private Long currentQuestionId;
-
     private Integer score = 0;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

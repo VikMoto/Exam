@@ -52,13 +52,9 @@ public class ExamService {
     public void saveSelectedAnswerForUser(Long userId, Long answerId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         Answer answer = answerRepository.findById(answerId).orElseThrow(() -> new RuntimeException("Answer not found"));
-
         user.getAnswers().add(answer);  // Assuming you have a getAnswers() method in the User entity that returns a List<Answer>.
         userRepository.save(user);
     }
-
-
-
 
 
     public int calculateScoreForUser(Long userId) {
@@ -70,10 +66,8 @@ public class ExamService {
                 score++;
             }
         }
-
         user.setScore(score);
         userRepository.save(user);
-
         return score;
     }
 
@@ -94,13 +88,11 @@ public class ExamService {
     public void submitAnswer(Long userId, Long questionId, List<Answer> submittedAnswers) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new RuntimeException("Question not found"));
-
         // Move from unanswered questions to viewed history
         user.getUnansweredQuestions().remove(question);
         user.getViewedQuestionsHistory().add(
                 UserQuestionHistory.builder().user(user).question(question).viewedAt(LocalDateTime.now()).build()
         );
-
         userRepository.save(user);
     }
 
@@ -234,7 +226,6 @@ public class ExamService {
             if (submittedAnswers == null || submittedAnswers.isEmpty()) {
                 continue;
             }
-
             for (String submittedAnswer : submittedAnswers) {
                 if (isAnswerCorrect(currentQuestionId, submittedAnswer)) {
                     correctAnswersCount++;
@@ -256,7 +247,6 @@ public class ExamService {
                         Question.builder().id(currentQuestionId).build() // using a reference to the question
                 ).viewedAt(LocalDateTime.now()).build()
         );
-
         userRepository.save(currentUser);
     }
 
@@ -271,7 +261,6 @@ public class ExamService {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -284,7 +273,6 @@ public class ExamService {
         if (currentScore == null) {
             currentScore = 0;
         }
-
         user.setScore(currentScore + 1);
         System.out.println("user = " + user);
         User saved = userRepository.save(user);// Save updated user score
@@ -342,7 +330,6 @@ public class ExamService {
     public Card getCardByQuestionId(Long questionId) {
         return cardRepository.findCardByQuestionId(questionId);
     }
-
 
 }
 
