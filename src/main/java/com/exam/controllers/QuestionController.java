@@ -26,11 +26,9 @@ import java.util.Objects;
 @RequestMapping("/teacher")
 @SessionAttributes("currentCard") // Ensure the card is stored in the session
 public class QuestionController {
-
     private final QuestionService questionService;
     private final CardService cardService;
     private final AnswerService answerService;
-
     private static int answerCount = 2;
 
     public QuestionController(QuestionService questionService, CardService cardService, AnswerService answerService) {
@@ -110,7 +108,6 @@ public class QuestionController {
             return String.valueOf(handleException(e));
         }
 
-
         // Extract and add answers based on prefixes
         for (int i = 1; params.containsKey("answer_" + i); i++) {
             Answer answer = new Answer();
@@ -132,9 +129,7 @@ public class QuestionController {
         // Set the current card for the question
         question.setCard(currentCard);
         questionService.saveQuestion(question);
-
         answerCount = 2; // Reset to the initial count
-
         return "redirect:/teacher/add-question";
     }
 
@@ -179,7 +174,6 @@ public class QuestionController {
         System.out.println("saveCard = " + saveCard);
         Long cardId = saveCard.getId();
 
-
         // Redirect to the question adding page with the card's ID as a parameter
         return "redirect:/teacher/add-question?cardId=" + cardId;
     }
@@ -218,21 +212,16 @@ public class QuestionController {
                 if (answerContent != null) {
                     answer.setContent(answerContent);
                 }
-
                 String isCorrect = params.get("isCorrect_" + answer.getId());
                 answer.setCorrect("on".equals(isCorrect));
-
                 // Save the updated answer
                 answerService.saveAnswer(answer);
             }
-
             // Save the updated question
             questionService.saveQuestion(question);
         }
-
         // Save the updated card
         cardService.saveCard(existingCard);
-
         return "redirect:/teacher/manage-cards";
     }
 
@@ -277,7 +266,6 @@ public class QuestionController {
         if (question == null) {
             return "redirect:/teacher/manage-cards";
         }
-
         answer.setQuestion(question);
         answerService.saveAnswer(answer);
         return "redirect:/teacher/manage-cards";
@@ -302,12 +290,6 @@ public class QuestionController {
         answerService.deleteAnswer(answerId);
         return "redirect:/teacher/manage-cards";
     }
-
-
-
-
-
-
 
     @GetMapping("/resetQuestionForm")
     public String resetQuestionForm() {

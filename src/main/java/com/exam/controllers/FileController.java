@@ -14,12 +14,10 @@ public class FileController {
     @GetMapping("/uploads/{filename:.+}")
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
         Resource file = new FileSystemResource("/app/uploads/" + filename);
-
         if (!file.exists()) {
             // Return a 404 Not Found response or some other error handling.
             return ResponseEntity.notFound().build();
         }
-
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(file);
     }
 }

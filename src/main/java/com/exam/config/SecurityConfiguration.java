@@ -49,10 +49,8 @@ public class SecurityConfiguration {
         configuration.addAllowedOrigin("*"); // Allow all origins
         configuration.addAllowedMethod("*"); // Allow all HTTP methods
         configuration.addAllowedHeader("*"); // Allow all headers
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-
         return source;
     }
 

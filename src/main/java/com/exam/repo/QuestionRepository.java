@@ -12,14 +12,11 @@ import java.util.Optional;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     Question findFirstByOrderByQuestionOrderAsc();
     List<Question> findByQuestionOrderGreaterThanOrderByQuestionOrderAsc(Integer order);
-
     Question findFirstByQuestionOrderGreaterThanOrderByQuestionOrderAsc(Integer orderValue);
     Question findFirstByQuestionOrderLessThanOrderByQuestionOrderDesc(Integer questionOrder);
     Optional<Question> findFirstByCardIdAndQuestionOrderGreaterThanOrderByQuestionOrderAsc(Long cardId, Integer currentQuestionOrder);
-
     Optional<Question> findFirstByCardIdAndQuestionOrderLessThanOrderByQuestionOrderDesc(Long cardId, Integer currentQuestionOrder);
     Optional<Question> findTopByCardIdOrderByQuestionOrderDesc(Long cardId);
-
     Optional<Question> findTopByOrderByQuestionOrderDesc();
 
 
